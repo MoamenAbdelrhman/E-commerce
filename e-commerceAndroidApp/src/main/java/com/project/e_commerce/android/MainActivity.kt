@@ -6,20 +6,29 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.project.e_commerce.android.presentation.ui.navigation.BottomNavigation
@@ -31,8 +40,9 @@ class MainActivity : ComponentActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
-
         val prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE)
         val isFirstTime = prefs.getBoolean("isFirstTime", true)
         val isLoggedIn = prefs.getBoolean("isLoggedIn", false)
@@ -53,7 +63,10 @@ class MainActivity : ComponentActivity() {
             @OptIn(ExperimentalMaterialApi::class)
             MyApplicationTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.White)
+                        .systemBarsPadding(),
                     color = MaterialTheme.colors.background
                 ) {
                     val navController = rememberNavController()
@@ -76,16 +89,24 @@ class MainActivity : ComponentActivity() {
                         floatingActionButton = {
                             if (currentRoute == Screens.ReelsScreen.route) {
                                 FloatingActionButton(
-                                    onClick = { /* action */ },
-                                    shape = androidx.compose.foundation.shape.CircleShape,
+                                    onClick = {
+                                    },
+                                    shape = CircleShape,
                                     containerColor = Color(0xFFFF6F00),
                                     contentColor = Color.White,
                                     elevation = FloatingActionButtonDefaults.elevation(
                                         defaultElevation = 4.dp,
                                         pressedElevation = 6.dp
                                     ),
+                                    modifier = Modifier
+                                        .border(5.dp, Color.White, CircleShape).size(64.dp)
                                 ) {
-                                    androidx.compose.material3.Text("Buy")
+                                    Text(
+                                        "Buy",
+                                        color = Color.White,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
                                 }
                             }
                         },

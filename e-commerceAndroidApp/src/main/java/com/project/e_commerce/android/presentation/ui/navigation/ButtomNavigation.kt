@@ -27,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.project.e_commerce.android.R
@@ -100,12 +101,13 @@ fun BottomNavigation(
                                             ),
                                             contentDescription = null,
                                             tint = if (currentRoute == item.route) PrimaryColor else BlackColor80,
-                                            modifier = Modifier.size(24.dp).padding(bottom = 4.dp)
+                                            modifier = Modifier.size(26.dp).padding(top = 4.dp, bottom = 4.dp)
                                         )
 
                                         Text(
+                                            modifier = Modifier.padding(top = 2.dp, bottom = 4.dp),
                                             text = item.title.toString(),
-                                            fontSize = tinyFontSize,
+                                            fontSize = 12.sp,
                                             fontWeight = if (currentRoute == item.route) FontWeight.Bold else FontWeight.Normal,
                                             color = if (currentRoute == item.route) PrimaryColor else BlackColor80,
                                             textAlign = TextAlign.Center
@@ -136,12 +138,13 @@ fun BottomNavigation(
                                             ),
                                             contentDescription = null,
                                             tint = if (currentRoute == item.route) PrimaryColor else BlackColor80,
-                                            modifier = Modifier.size(24.dp).padding(bottom = 4.dp)
+                                            modifier = Modifier.size(26.dp).padding(top = 4.dp, bottom = 4.dp)
                                         )
 
                                         Text(
+                                            modifier = Modifier.padding(top = 2.dp, bottom = 4.dp),
                                             text = item.title.toString(),
-                                            fontSize = tinyFontSize,
+                                            fontSize = 12.sp,
                                             fontWeight = if (currentRoute == item.route) FontWeight.Bold else FontWeight.Normal,
                                             color = if (currentRoute == item.route) PrimaryColor else BlackColor80,
                                             textAlign = TextAlign.Center
@@ -172,12 +175,13 @@ fun BottomNavigation(
                                             ),
                                             contentDescription = null,
                                             tint = if (currentRoute == item.route) PrimaryColor else BlackColor80,
-                                            modifier = Modifier.size(24.dp).padding(bottom = 4.dp)
+                                            modifier = Modifier.size(26.dp).padding(top = 2.dp, bottom = 4.dp)
                                         )
 
                                         Text(
+                                            modifier = Modifier.padding(top = 2.dp, bottom = 4.dp),
                                             text = item.title.toString(),
-                                            fontSize = tinyFontSize,
+                                            fontSize = 12.sp,
                                             fontWeight = if (currentRoute == item.route) FontWeight.Bold else FontWeight.Normal,
                                             color = if (currentRoute == item.route) PrimaryColor else BlackColor80,
                                             textAlign = TextAlign.Center
