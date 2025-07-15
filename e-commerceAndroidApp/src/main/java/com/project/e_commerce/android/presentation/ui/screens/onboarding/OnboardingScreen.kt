@@ -3,11 +3,14 @@ package com.project.e_commerce.android.presentation.ui.screens.onboarding
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.e_commerce.android.R
+import com.project.e_commerce.android.presentation.ui.navigation.Screens
 
 @Composable
 fun OnboardingScreen(
@@ -44,28 +48,22 @@ fun OnboardingScreen(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(16.dp)
-            ) {
-                Button(
-                    onClick = onSkipClick,
-                    shape = RoundedCornerShape(20.dp),
-                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 4.dp),
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
-                    elevation = ButtonDefaults.elevation(0.dp),
-                    modifier = Modifier
-                        .height(36.dp)
-                        .background(
-                            brush = Brush.verticalGradient(
-                                colors = listOf(Color(0xFF3C8CE7), Color(0xFF00EAFF))
-                            ),
-                            shape = RoundedCornerShape(20.dp)
+                    .height(36.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(Color(0xFF3C8CE7), Color(0xFF00EAFF))
                         )
-                ) {
-                    Text(
-                        text = "Skip",
-                        color = Color.White,
-                        fontSize = 14.sp
                     )
-                }
+                    .clickable { onSkipClick() }
+                    .padding(horizontal = 16.dp, vertical = 6.dp)
+            ) {
+                Text(
+                    text = "Skip",
+                    color = Color.White,
+                    fontSize = 14.sp,
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
         }
 
@@ -131,6 +129,8 @@ fun OnboardingScreen(
                             .padding(top = 32.dp)
                             .padding(horizontal = 16.dp)
                             .fillMaxWidth()
+                            .height(50.dp),
+                        elevation = ButtonDefaults.elevation(8.dp)
                     ) {
                         Text(
                             text = if (isLast) "Get Started" else "Next",
@@ -182,8 +182,8 @@ fun OnboardingScreen1(navController: NavController) {
         onSkipClick = {
             val prefs = context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
             prefs.edit().putBoolean("isFirstTime", false).apply()
-            navController.navigate("login_screen") {
-                popUpTo("onboarding3") { inclusive = true }
+            navController.navigate(Screens.ReelsScreen.route) {
+                popUpTo(0) { inclusive = true }
             }
         }
     )
@@ -203,8 +203,8 @@ fun OnboardingScreen2(navController: NavController) {
         onSkipClick = {
             val prefs = context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
             prefs.edit().putBoolean("isFirstTime", false).apply()
-            navController.navigate("login_screen") {
-                popUpTo("onboarding3") { inclusive = true }
+            navController.navigate(Screens.ReelsScreen.route) {
+                popUpTo(0) { inclusive = true }
             }
         }
     )
@@ -223,15 +223,15 @@ fun OnboardingScreen3(navController: NavController) {
         onNextClick = {
             val prefs = context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
             prefs.edit().putBoolean("isFirstTime", false).apply()
-            navController.navigate("login_screen") {
-                popUpTo("onboarding3") { inclusive = true }
+            navController.navigate(Screens.ReelsScreen.route) {
+                popUpTo(0) { inclusive = true }
             }
         },
         onSkipClick = {
             val prefs = context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
             prefs.edit().putBoolean("isFirstTime", false).apply()
-            navController.navigate("login_screen") {
-                popUpTo("onboarding3") { inclusive = true }
+            navController.navigate(Screens.ReelsScreen.route) {
+                popUpTo(0) { inclusive = true }
             }
         }
     )

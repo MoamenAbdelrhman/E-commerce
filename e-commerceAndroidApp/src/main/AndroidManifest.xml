@@ -11,7 +11,7 @@
         android:supportsRtl="true">
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme.Launcher"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

@@ -46,15 +46,17 @@ fun NotificationScreen(navController: NavHostController) {
                 .fillMaxWidth()
                 .height(48.dp)
         ) {
-            IconButton(
+            androidx.compose.material3.IconButton(
                 onClick = { navController.popBackStack() },
-                modifier = Modifier.align(Alignment.CenterStart)
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .offset(x = (-20).dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.back_icon),
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_back),
                     contentDescription = "Back",
-                    modifier = Modifier.fillMaxSize()
-                        .padding(4.dp)
+                    tint = Color(0xFF0066CC),
+                    modifier = Modifier.padding(10.dp)
                 )
             }
             Text(

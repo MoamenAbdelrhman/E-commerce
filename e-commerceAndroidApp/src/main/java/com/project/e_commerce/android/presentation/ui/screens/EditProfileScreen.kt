@@ -61,13 +61,15 @@ fun EditProfileScreen(navController: NavHostController) {
         ) {
             androidx.compose.material3.IconButton(
                 onClick = { navController.popBackStack() },
-                modifier = Modifier.align(Alignment.CenterStart)
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .offset(x = (-20).dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.back_icon),
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_back),
                     contentDescription = "Back",
-                    modifier = Modifier.fillMaxSize()
-                        .padding(4.dp)
+                    tint = Color(0xFF0066CC),
+                    modifier = Modifier.padding(10.dp)
                 )
             }
 
@@ -102,7 +104,8 @@ fun EditProfileScreen(navController: NavHostController) {
             onClick = { navController.popBackStack() },
             modifier = Modifier.fillMaxWidth().height(50.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFF6F00)),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
+            elevation = ButtonDefaults.elevation(6.dp)
         ) {
             Text("Save Changes", color = Color.White, fontWeight = FontWeight.Bold)
         }

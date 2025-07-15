@@ -64,7 +64,8 @@ fun CreateAnAccountScreen(navController: NavController) {
             .verticalScroll(scrollState)
             .imePadding()
             .background(Color.White)
-            .padding(horizontal = 24.dp, vertical = 16.dp),
+            .padding(horizontal = 24.dp, vertical = 16.dp)
+            .imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(32.dp))
@@ -118,7 +119,7 @@ fun CreateAnAccountScreen(navController: NavController) {
                 .height(50.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFF6F00)),
             shape = RoundedCornerShape(10.dp),
-            elevation = ButtonDefaults.elevation(12.dp)
+            elevation = ButtonDefaults.elevation(8.dp)
         ) {
             Text(
                 text = "Register",

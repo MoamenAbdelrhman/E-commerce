@@ -1,6 +1,5 @@
 package com.project.e_commerce.android.presentation.ui.navigation
 
-import SearchScreen
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
@@ -8,32 +7,36 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.project.e_commerce.android.presentation.ui.screens.AddNewProductScreen
-import com.project.e_commerce.android.presentation.ui.screens.AddNewReelScreen
+import com.project.e_commerce.android.presentation.ui.screens.AddNewContentScreen
+import com.project.e_commerce.android.presentation.ui.screens.AllProductsScreen
 import com.project.e_commerce.android.presentation.ui.screens.CartScreen
 import com.project.e_commerce.android.presentation.ui.screens.DetailsScreen
-import com.project.e_commerce.android.presentation.ui.screens.EditProductScreen
 import com.project.e_commerce.android.presentation.ui.screens.EditProfileScreen
-import com.project.e_commerce.android.presentation.ui.screens.EditReelScreen
+import com.project.e_commerce.android.presentation.ui.screens.ExploreScreenWithHeader
 import com.project.e_commerce.android.presentation.ui.screens.FavouriteScreen
 import com.project.e_commerce.android.presentation.ui.screens.NotificationScreen
 import com.project.e_commerce.android.presentation.ui.screens.OrdersHistoryScreen
 import com.project.e_commerce.android.presentation.ui.screens.ProductScreen
 import com.project.e_commerce.android.presentation.ui.screens.RecentlyViewedScreen
+import com.project.e_commerce.android.presentation.ui.screens.SearchReelsAndUsersScreen
+import com.project.e_commerce.android.presentation.ui.screens.SearchScreen
 import com.project.e_commerce.android.presentation.ui.screens.SettingsScreen
+import com.project.e_commerce.android.presentation.ui.screens.SoundPageScreen
+import com.project.e_commerce.android.presentation.ui.screens.TrackOrderScreen
 import com.project.e_commerce.android.presentation.ui.screens.createAccountScreen.CreateAnAccountScreen
 import com.project.e_commerce.android.presentation.ui.screens.loginScreen.LoginScreen
 import com.project.e_commerce.android.presentation.ui.screens.profileScreen.ProfileScreen
 import com.project.e_commerce.android.presentation.ui.screens.reelsScreen.ReelsView
 import com.project.e_commerce.android.presentation.ui.screens.changePasswordScreen.ChangePasswordScreen
 import com.project.e_commerce.android.presentation.ui.screens.changePasswordScreen.PasswordChangedSuccessScreen
+import com.project.e_commerce.android.presentation.ui.screens.exploreItems
 import com.project.e_commerce.android.presentation.ui.screens.forgetPassword.ForgetPasswordRequestScreen
 import com.project.e_commerce.android.presentation.ui.screens.forgetPassword.ResetPasswordScreen
 import com.project.e_commerce.android.presentation.ui.screens.onboarding.OnboardingScreen1
 import com.project.e_commerce.android.presentation.ui.screens.onboarding.OnboardingScreen2
 import com.project.e_commerce.android.presentation.ui.screens.onboarding.OnboardingScreen3
+import com.project.e_commerce.android.presentation.ui.screens.sampleProducts
 import com.project.e_commerce.android.presentation.ui.screens.splashScreen.SplashScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -56,13 +59,26 @@ fun MyNavHost(navController: NavHostController, startDestination: String) {
         composable(Screens.LoginScreen.PasswordChangedSuccessScreen.route) { PasswordChangedSuccessScreen(navController) }
 
         composable(Screens.ReelsScreen.route) { ReelsView(navController) }
-        composable(Screens.ReelsScreen.SearchScreen.route) { SearchScreen(navController) }
+
+        composable(Screens.ReelsScreen.SearchReelsAndUsersScreen.route) {
+            SearchReelsAndUsersScreen(navController)
+        }
+        composable(Screens.ReelsScreen.ExploreScreen.route) {
+            ExploreScreenWithHeader(items = exploreItems, navController  )
+        }
+        composable(Screens.ReelsScreen.SoundPageScreen.route) {
+            SoundPageScreen( navController)
+        }
 
         composable(Screens.ProductScreen.route) { ProductScreen(navController) }
 
 
         composable(Screens.ProductScreen.SearchScreen.route) {
             SearchScreen(navController = navController)
+        }
+
+        composable(Screens.ProductScreen.AllProductsScreen.route) {
+            AllProductsScreen(navController = navController, products = sampleProducts(), title = "Featured Products")
         }
 
         composable(
@@ -90,6 +106,10 @@ fun MyNavHost(navController: NavHostController, startDestination: String) {
             RecentlyViewedScreen(navController = navController)
         }
 
+        composable(Screens.ProfileScreen.TrackOrderScreen.route) {
+            TrackOrderScreen(navController = navController)
+        }
+
         composable(Screens.ProfileScreen.OrdersHistoryScreen.route) {
             OrdersHistoryScreen(navController = navController)
         }
@@ -98,12 +118,8 @@ fun MyNavHost(navController: NavHostController, startDestination: String) {
             SettingsScreen(navController = navController)
         }
 
-        composable(Screens.ProfileScreen.AddNewProductScreen.route) {
-            AddNewProductScreen(navController = navController)
-        }
-
-        composable(Screens.ProfileScreen.AddNewReelScreen.route) {
-            AddNewReelScreen(navController = navController)
+        composable(Screens.ProfileScreen.AddNewContentScreen.route) {
+            AddNewContentScreen(navController = navController)
         }
 
 
@@ -114,20 +130,14 @@ fun MyNavHost(navController: NavHostController, startDestination: String) {
         composable(Screens.ProfileScreen.EditProfileScreen.route) {
             EditProfileScreen(navController)
         }
-        composable(
+
+        /*composable(
             route = Screens.ProfileScreen.EditReelScreen.route,
             arguments = listOf(navArgument("reelId") { type = NavType.StringType })
         ) { backStackEntry ->
             val reelId = backStackEntry.arguments?.getString("reelId") ?: "0"
             EditReelScreen(navController, reelId)
-        }
-        composable(
-            route = Screens.ProfileScreen.EditProductScreen.route,
-            arguments = listOf(navArgument("productId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val productId = backStackEntry.arguments?.getString("productId") ?: "0"
-            EditProductScreen(navController, productId)
-        }
+        }*/
 
         composable("onboarding1") { OnboardingScreen1(navController) }
         composable("onboarding2") { OnboardingScreen2(navController) }

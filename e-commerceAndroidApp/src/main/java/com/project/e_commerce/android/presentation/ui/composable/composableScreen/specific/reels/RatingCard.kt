@@ -33,8 +33,7 @@ fun RatingCard(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White, shape = RoundedCornerShape(12.dp))
-            .padding(12.dp),
+            .padding(4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
@@ -56,8 +55,10 @@ fun RatingCard(
             }
             Spacer(modifier = Modifier.width(8.dp))
             Column {
-                Text(userName, fontWeight = FontWeight.Bold, color = BlackColor80)
+                Text(userName, color =Color.Black)
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(rateContent, fontSize = 12.sp, color = BlackColor80)
+                Spacer(modifier = Modifier.height(8.dp))
                 StarRating(rating = rateNumber, onRatingChange = {})
             }
         }

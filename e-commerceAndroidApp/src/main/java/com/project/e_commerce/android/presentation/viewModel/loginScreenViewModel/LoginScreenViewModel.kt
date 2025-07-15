@@ -61,7 +61,7 @@ class LoginScreenViewModel(
         prefs.edit().putBoolean("isLoggedIn", true).apply()
 
         navController.navigate(Screens.ReelsScreen.route) {
-            popUpTo(Screens.LoginScreen.route) { inclusive = true }
+            popUpTo(0) { inclusive = true }
         }
     }
 

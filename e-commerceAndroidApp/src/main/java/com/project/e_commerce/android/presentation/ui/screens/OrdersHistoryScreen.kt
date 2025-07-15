@@ -1,27 +1,36 @@
 package com.project.e_commerce.android.presentation.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -51,8 +61,8 @@ fun OrdersHistoryScreen(navController: NavHostController) {
     var selectedTabIndex by remember { mutableStateOf(0) }
     val tabs = listOf(
         "All" to 12,
-        "Pending" to 4,
         "Completed" to 6,
+        "Pending" to 4,
         "Canceled" to 2
     )
 
@@ -69,17 +79,20 @@ fun OrdersHistoryScreen(navController: NavHostController) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
+                .height(42.dp)
         ) {
-            IconButton(
+
+            androidx.compose.material3.IconButton(
                 onClick = { navController.popBackStack() },
-                modifier = Modifier.align(Alignment.CenterStart)
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .offset(x = (-20).dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.back_icon),
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_back),
                     contentDescription = "Back",
-                    modifier = Modifier.fillMaxSize()
-                        .padding(4.dp)
+                    tint = Color(0xFF0066CC),
+                    modifier = Modifier.padding(10.dp)
                 )
             }
 
@@ -99,7 +112,7 @@ fun OrdersHistoryScreen(navController: NavHostController) {
             onTabSelected = { selectedTabIndex = it }
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
 
         Row(
@@ -138,21 +151,213 @@ fun OrdersHistoryScreen(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
+
+
         Column {
             repeat(10) {
                 OrderItem(status = when (it % 4) {
                     0 -> "Pending" to Color.Yellow
                     1 -> "Delivered" to Color.Green
                     2 -> "Canceled" to Color.Red
-                    else -> "Pending" to Color.Yellow
+                    else -> "Delivered" to Color.Green
                 })
             }
         }
     }
 }
 
+/*
 @Composable
-fun OrderItem(status: Pair<String, Color>) {
+fun OrderItem(
+    orderId: String = "NEGE0054632456",
+    productImage: Int = R.drawable.perfume4,
+    title: String = "Tom Ford Black Orchid",
+    description: String = "Black Orchid Eau de Parfum opens with aphrodisiac black truffle and sparkling pr...",
+    status: Pair<String, Color>,
+    date: String = "on Tuesday, 13th Dec, 2025",
+    price: String = "100 $",
+    onUploadVideo: () -> Unit = {},
+    onReviewProduct: () -> Unit = {},
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .shadow(4.dp, RoundedCornerShape(18.dp))
+            .clip(RoundedCornerShape(18.dp))
+            .background(Color.White)
+            .border(1.dp, Color(0xFFE9E9E9), RoundedCornerShape(18.dp))
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+    ) {
+        Column {
+            // Order ID
+            Text(
+                buildString {
+                    append("Order ID ")
+                    append(orderId)
+                },
+                fontWeight = FontWeight.Medium,
+                fontSize = 14.sp,
+                color = Color(0xFFB0B5C0)
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.height(IntrinsicSize.Min)
+            ) {
+                // صورة المنتج (على اليسار)
+                Image(
+                    painter = painterResource(id = productImage),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(64.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
+                )
+
+                Spacer(modifier = Modifier.width(10.dp))
+
+                // الأعمدة على اليمين
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = title,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF181D23),
+                        fontSize = 14.sp
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = description,
+                        fontWeight = FontWeight.Normal,
+                        color = Color(0xFFB0B5C0),
+                        fontSize = 13.sp,
+                        maxLines = 2
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    // الحالة/التاريخ/السعر
+                    Row(
+                        verticalAlignment = Alignment.Top,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column {
+                            Text(
+                                text = status.first,
+                                color = status.second,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = date,
+                                color = Color(0xFF181D23),
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+                        Text(
+                            text = price,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFFF6F00),
+                            fontSize = 16.sp
+                        )
+                    }
+                }
+            }
+
+            // الأزرار فقط عند Delivered
+            if (status.first == "Delivered") {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    "Share your experience",
+                    color = Color(0xFF181D23),
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 13.sp
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(20.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = onReviewProduct,
+                        shape = RoundedCornerShape(10.dp),
+                        border = BorderStroke(1.dp, Color(0xFFFF6F00)),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            backgroundColor = Color(0xFFFFF3E7),
+                            contentColor = Color(0xFFFF6F00)
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(45.dp),
+                        contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp), // Padding للزر نفسه
+                        elevation = ButtonDefaults.elevation(
+                            defaultElevation = 3.dp,
+                            pressedElevation = 2.dp
+                        )
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_star),
+                            contentDescription = "Review Product",
+                            tint = Color(0xFFFF6F00),
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            "Review Product",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
+                        )
+                    }
+
+                    OutlinedButton(
+                        onClick = onUploadVideo,
+                        shape = RoundedCornerShape(10.dp),
+                        border = BorderStroke(1.dp, Color(0xFF176DBA)),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            backgroundColor = Color(0xFFEFF6FA),
+                            contentColor = Color(0xFF176DBA)
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(45.dp),
+                        contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp),
+                        elevation = ButtonDefaults.elevation(
+                            defaultElevation = 3.dp,
+                            pressedElevation = 2.dp
+                        )
+                    )  {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_video_camera),
+                            contentDescription = "Upload Video",
+                            tint = Color(0xFF176DBA),
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            "Upload Video",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
+                        )
+                    }
+                }
+            }
+        }
+    }
+}*/
+
+
+
+@Composable
+fun OrderItem(status: Pair<String, Color>, onUploadVideo: () -> Unit = {}) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -173,11 +378,45 @@ fun OrderItem(status: Pair<String, Color>) {
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        Text(
-            text = "Hanger Shirt",
-            fontWeight = FontWeight.Bold,
-            fontSize = 14.sp
-        )
+        // اسم المنتج + زر الفيديو إن وجد
+        Column(
+            modifier = Modifier.width(130.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Hanger Shirt",
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp
+            )
+            // زر رفع فيديو يظهر فقط مع Delivered
+            if (status.first == "Delivered") {
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .border(1.dp, Color(0xFF176DBA), RoundedCornerShape(26))
+                        .clip(RoundedCornerShape(16))
+                        .clickable { onUploadVideo() }
+                        .background(Color(0xFFEFF6FA))
+                        .padding(horizontal = 8.dp, vertical = 6.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_video_camera),
+                        contentDescription = "Upload Video",
+                        tint = Color(0xFF176DBA),
+                        modifier = Modifier.size(18.dp),
+                    )
+                    Spacer(modifier = Modifier.width(5.dp))
+                    Text(
+                        text = "Upload video",
+                        color = Color(0xFF176DBA),
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 13.sp
+                    )
+                }
+            }
+
+        }
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -196,6 +435,7 @@ fun OrderItem(status: Pair<String, Color>) {
         Spacer(modifier = Modifier.width(8.dp))
     }
 }
+
 
 
 @Composable

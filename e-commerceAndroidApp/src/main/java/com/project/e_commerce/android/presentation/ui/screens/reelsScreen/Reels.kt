@@ -1,12 +1,15 @@
 package com.project.e_commerce.android.presentation.ui.screens.reelsScreen
 
 import android.net.Uri
+import com.project.e_commerce.R
 
 data class Reels(
     val id: String = "",
     val userName: String = "",
-    val userImage: String = "",
-    val video: Uri ,
+    val userImage: Int = 0,
+    val video: Uri? = null,
+    val images: List<Uri>? = null,
+    val fallbackImageRes: Int = com.project.e_commerce.android.R.drawable.reelsphoto,
     val contentDescription: String = "",
     val love: LoveItem = LoveItem(),
     val ratings: List<Ratings> = emptyList(),

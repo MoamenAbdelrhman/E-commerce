@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -25,6 +26,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Percent
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -68,16 +70,17 @@ fun PaymentScreen(navController: NavController, cartItems: List<CartItem> = empt
                 .fillMaxWidth()
                 .height(48.dp)
         ) {
-            IconButton(
+            androidx.compose.material3.IconButton(
                 onClick = { navController.popBackStack() },
-                modifier = Modifier.align(Alignment.CenterStart)
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .offset(x = (-20).dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.back_icon),
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_back),
                     contentDescription = "Back",
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(4.dp)
+                    tint = Color(0xFF0066CC),
+                    modifier = Modifier.padding(10.dp)
                 )
             }
 
@@ -140,14 +143,10 @@ fun PaymentScreen(navController: NavController, cartItems: List<CartItem> = empt
 
         Button(
             onClick = { /* Confirm payment */ },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().height(56.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFF6600)),
             shape = RoundedCornerShape(10.dp),
-            elevation = ButtonDefaults.elevation(
-                defaultElevation = 8.dp,   // قوة الظل العادية
-                pressedElevation = 12.dp,   // عند الضغط على الزر
-                hoveredElevation = 10.dp
-            )
+            elevation = ButtonDefaults.elevation(6.dp)
         ) {
             Text("Pay Now", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }

@@ -245,7 +245,7 @@ fun ResetPasswordScreen(navController: NavController) {
                 .height(50.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFF6F00)), // لون برتقالي
             shape = RoundedCornerShape(10.dp),
-            elevation = ButtonDefaults.elevation(12.dp)
+            elevation = ButtonDefaults.elevation(8.dp)
         ) {
             Text(
                 text = "Submit code",

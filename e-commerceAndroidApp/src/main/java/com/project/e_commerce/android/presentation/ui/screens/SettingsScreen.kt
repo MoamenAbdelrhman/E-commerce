@@ -3,6 +3,7 @@ package com.project.e_commerce.android.presentation.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -33,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.project.e_commerce.android.R
+import com.project.e_commerce.android.presentation.ui.navigation.Screens
 
 // SettingsScreen.kt
 @Composable
@@ -53,13 +56,15 @@ fun SettingsScreen(navController: NavHostController) {
         ) {
             androidx.compose.material3.IconButton(
                 onClick = { navController.popBackStack() },
-                modifier = Modifier.align(Alignment.CenterStart)
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .offset(x = (-20).dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.back_icon),
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_back),
                     contentDescription = "Back",
-                    modifier = Modifier.fillMaxSize()
-                        .padding(4.dp)
+                    tint = Color(0xFF0066CC),
+                    modifier = Modifier.padding(10.dp)
                 )
             }
 
@@ -73,31 +78,44 @@ fun SettingsScreen(navController: NavHostController) {
             )
         }
 
+        Spacer(modifier = Modifier.height(24.dp))
+        SettingsItem("Orders Track", R.drawable.track) {
+            navController.navigate(Screens.ProfileScreen.TrackOrderScreen.route)
+        }
         Spacer(modifier = Modifier.height(16.dp))
 
-        SettingsItem("Language", R.drawable.ic_language)
-        Spacer(modifier = Modifier.height(6.dp))
-        SettingsItem("Location", R.drawable.ic_location)
+        SettingsItem("Orders history", R.drawable.ic_orders) {
+            navController.navigate(Screens.ProfileScreen.OrdersHistoryScreen.route)
+        }
         Spacer(modifier = Modifier.height(16.dp))
-        SettingsItem("Payment Methods", R.drawable.ic_card)
+        SettingsItem("Recently viewed", R.drawable.ic_eye) {
+            navController.navigate(Screens.ProfileScreen.RecentlyScreen.route)
+        }
         Spacer(modifier = Modifier.height(16.dp))
-        SettingsItem("Ask Help", R.drawable.ic_help)
+        SettingsItem("Payment Methods", R.drawable.ic_card){}
+        Spacer(modifier = Modifier.height(16.dp))
+        SettingsItem("Location", R.drawable.ic_location){}
+        Spacer(modifier = Modifier.height(16.dp))
+        SettingsItem("Language", R.drawable.ic_language){}
+        Spacer(modifier = Modifier.height(16.dp))
+        SettingsItem("Ask Help", R.drawable.ic_help){}
     }
 }
 
 @Composable
-fun SettingsItem(title: String, icon: Int) {
+fun SettingsItem(title: String, icon: Int,onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .border(1.dp, Color(0xFFFF6600), RoundedCornerShape(12.dp))
-            .padding(16.dp)
-            .padding(vertical = 8.dp),
+            .clickable { onClick() }
+            .padding(vertical = 14.dp, horizontal =  12.dp)
+            ,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(painter = painterResource(id = icon), contentDescription = null)
         Spacer(modifier = Modifier.width(12.dp))
-        Text(title, modifier = Modifier.weight(1f))
+        Text(title, modifier = Modifier.weight(1f), fontSize = 15.sp)
         Icon(Icons.Default.KeyboardArrowRight, contentDescription = null)
     }
 }

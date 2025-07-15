@@ -115,12 +115,15 @@ fun CartScreen(navController: NavController) {
         Button(
             onClick = {
                 navController.navigate(Screens.CartScreen.PaymentScreen.route) },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().height(56.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFF6600)),
-            shape = RoundedCornerShape(10.dp)
+            shape = RoundedCornerShape(10.dp),
+            elevation = ButtonDefaults.elevation(6.dp)
         ) {
             Text("Checkout", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }
+
+        Spacer(modifier = Modifier.height(86.dp))
     }
 }
 

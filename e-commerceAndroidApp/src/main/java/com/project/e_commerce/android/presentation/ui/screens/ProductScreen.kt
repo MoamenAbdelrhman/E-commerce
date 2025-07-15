@@ -18,20 +18,30 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
@@ -59,7 +69,9 @@ import com.airbnb.lottie.utils.GammaEvaluator.evaluate
 import com.project.e_commerce.android.R
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.input.ImeAction
 import com.project.e_commerce.android.presentation.ui.navigation.Screens
 
 
@@ -83,18 +95,17 @@ fun ProductScreen(navController: NavHostController) {
         contentPadding = PaddingValues(bottom = 72.dp)
     ) {
         item {
-            TopBarWithCart()
-            Spacer(modifier = Modifier.height(12.dp))
+            TopBarWithCart(navController)
+            Spacer(modifier = Modifier.height(4.dp))
         }
 
         item {
-            Box(modifier = Modifier.clickable {
+            SearchBar(searchQuery = searchQuery, onQueryChanged = {
+                searchQuery = it
+            }, onClick ={
                 navController.navigate(Screens.ProductScreen.SearchScreen.route)
-            }) {
-                SearchBar(searchQuery = searchQuery, onQueryChanged = {
-                    searchQuery = it
-                })
-            }
+            })
+
             Spacer(modifier = Modifier.height(12.dp))
         }
 
@@ -141,47 +152,87 @@ fun ProductScreen(navController: NavHostController) {
 
 
 @Composable
-fun TopBarWithCart() {
+fun TopBarWithCart(navController: NavHostController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = "Products",
             fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
+            fontSize = 22.sp,
             modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = Color(0xFF0066CC)
         )
+
+        IconButton(modifier = Modifier.offset(x = (12).dp),
+            onClick = { navController.navigate(Screens.ProfileScreen.NotificationScreen.route) }) {
+            Box(
+                contentAlignment = Alignment.TopEnd
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.notification_icon),
+                    contentDescription = "Notifications",
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size(28.dp)
+                )
+                Box(
+                    modifier = Modifier
+                        .size(16.dp)
+                        .background(Color(0xFFFF3D00), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "1",
+                        color = Color.White,
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
 
     }
 }
 @Composable
-fun SearchBar(searchQuery: String, onQueryChanged: (String) -> Unit) {
-    Box(
+fun SearchBar(searchQuery: String, onQueryChanged: (String) -> Unit, onClick: () -> Unit ) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
+            .height(46.dp)
             .padding(horizontal = 16.dp)
-            .height(52.dp)
-            .clip(RoundedCornerShape(24.dp))
-            .background(
-                Brush.verticalGradient(
-                    listOf(Color(0xFFFFE57F), Color(0xFFFFC107))
-                )
-            )
+            .clickable { onClick() }
     ) {
         TextField(
             value = searchQuery,
             onValueChange = onQueryChanged,
-            placeholder = { Text("Search...", color = Color.Gray) },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+            placeholder = {
+                androidx.compose.material3.Text(
+                    "Search ",
+                    color = Color.Gray
+                )
+            },
+            trailingIcon = {
+                androidx.compose.material.Icon(
+                    Icons.Default.Search,
+                    contentDescription = "Search",
+                    tint = Color(0xFF0066CC),
+                )
+            },
             singleLine = true,
-            enabled = false, // هذا يمنع الكتابة داخله
+            enabled = false,
             modifier = Modifier
                 .fillMaxSize()
+                .border(
+                    width = 1.dp,
+                    color = Color(0xFF176DBA),
+                    shape = RoundedCornerShape(12.dp)
+                )
                 .padding(horizontal = 8.dp),
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = Color.Transparent,
@@ -192,52 +243,98 @@ fun SearchBar(searchQuery: String, onQueryChanged: (String) -> Unit) {
             ),
             textStyle = TextStyle(color = Color.Black)
         )
+
     }
 }
+
 
 
 
 @Composable
 fun SalesCard() {
-    Image(
-        painter = painterResource(id = R.drawable.ic_sales), // استخدم صورة الـ Sales
-        contentDescription = null,
+    Row(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
             .fillMaxWidth()
-            .height(120.dp)
-            .clip(RoundedCornerShape(12.dp)),
-        contentScale = ContentScale.Crop
-    )
-}
-
-@Composable
-fun <T> SectionWithHorizontalList(
-    title: String,
-    items: List<T>,
-    itemContent: @Composable (T) -> Unit
-) {
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            .height(150.dp)
+            .clip(RoundedCornerShape(14.dp))
+            .background(Color(0xFF2196F3))
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(start = 22.dp, top = 18.dp, bottom = 18.dp)
+                .widthIn(max = 170.dp),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-            Text("See All", color = Color.Blue, fontSize = 14.sp)
-        }
+            Text(
+                "Sales",
+                color = Color.White,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.ExtraBold,
+                fontSize = 28.sp,
+            )
+            Text(
+                "get 25% discount",
+                color = Color.White,
+                fontSize = 19.sp,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                modifier = Modifier.padding(top = 2.dp)
+            )
+            Spacer(modifier = Modifier.height(14.dp))
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(items) { item ->
-                itemContent(item)
+            Box(
+                modifier = Modifier
+                    .shadow(
+                        elevation = 8.dp,
+                        shape = RoundedCornerShape(10.dp),
+                        clip = false
+                    )
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(Color(0xFFf8a714), Color(0xFFed380a))
+                        )
+                    )
+                    .clickable { }
+                    .requiredHeight(50.dp)
+                    .widthIn(min = 110.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Shop Now",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 0.dp) // Padding كبير من كل اتجاه
+                )
             }
+
         }
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        // ✅ الوزن موضوع مباشرة على Box داخل الـ Row
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .padding(end = 16.dp)
+                .aspectRatio(1.6f) // العرض أكبر من الطول
+                .clip(RoundedCornerShape( 12.dp))
+                .background(Color.White)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.keyboard_hand),
+                contentDescription = "Sale Visual",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
     }
 }
+
+
 
 @Composable
 fun CategoryItem(
@@ -289,7 +386,20 @@ fun ProductSection(title: String, products: List<Product>, navController: NavHos
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-            Text("See All", color = Color.Blue, fontSize = 14.sp)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable {
+                    navController.navigate(Screens.ProductScreen.AllProductsScreen.route)
+                }
+            ) {
+                Text("See All", color = Color(0xFF0B74DA), fontSize = 14.sp)
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowRight,
+                    contentDescription = null,
+                    tint = Color(0xFF0B74DA),
+                    modifier = Modifier.size(18.dp)
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -370,7 +480,7 @@ fun ProductCard(product: Product, onClick: () -> Unit) {
         ) {
             Text(
                 text = "${product.price}$",
-                color = Color(0xFFFF5722),
+                color = Color(0xFFFF6F00),
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp
             )
@@ -471,9 +581,18 @@ data class Product(
 
 fun sampleProducts() = listOf(
     Product("Coco Noir Chanel", R.drawable.perfume1, "100", 4.8),
+    Product("Bleu De Chanel", R.drawable.img3, "100", 4.0),
+    Product("Coco Mademoiselle", R.drawable.perfume3, "100", 3.5),
+    Product("Tom Ford Black", R.drawable.perfume4, "100", 5.0),
+    Product("Coco Noir Chanel", R.drawable.img4, "100", 4.8),
+    Product("Bleu De Chanel", R.drawable.img2, "100", 4.0),
+    Product("Coco Mademoiselle", R.drawable.perfume3, "100", 3.5),
+    Product("Tom Ford Black", R.drawable.perfume4, "100", 5.0),
+    Product("Coco Noir Chanel", R.drawable.img6, "100", 4.8),
     Product("Bleu De Chanel", R.drawable.perfume2, "100", 4.0),
     Product("Coco Mademoiselle", R.drawable.perfume3, "100", 3.5),
-    Product("Tom Ford Black", R.drawable.perfume4, "100", 5.0)
+    Product("Tom Ford Black", R.drawable.img1, "100", 5.0),
+
 )
 
 data class Category(

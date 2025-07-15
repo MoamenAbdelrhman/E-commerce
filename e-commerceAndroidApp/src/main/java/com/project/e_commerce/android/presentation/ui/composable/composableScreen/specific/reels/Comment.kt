@@ -67,8 +67,7 @@ fun CommentItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFFF9F9F9), shape = RoundedCornerShape(12.dp))
-            .padding(12.dp)
+            .padding(4.dp)
     ) {
         Row(verticalAlignment = Alignment.Top) {
             Box(
@@ -86,12 +85,14 @@ fun CommentItem(
             }
             Spacer(modifier = Modifier.width(8.dp))
             Column(Modifier.weight(1f)) {
-                Text(userName, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = BlackColor80)
-                Text(comment, fontSize = 13.sp, color = Color.Gray)
+                Text(userName, fontSize = 14.sp, color = Color.Gray)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(comment, fontSize = 13.sp, color =BlackColor80 )
+                Spacer(modifier = Modifier.height(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(time, fontSize = 11.sp, color = Color.Gray)
-                    Spacer(Modifier.width(8.dp))
-                    Text("Reply", fontSize = 11.sp, color = SecondaryColor)
+                    Spacer(Modifier.width(18.dp))
+                    Text("Reply", fontSize = 11.sp, color = Color.Gray)
                 }
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {

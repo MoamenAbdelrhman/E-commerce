@@ -36,7 +36,11 @@ import com.project.e_commerce.android.R
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.ui.draw.shadow
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
@@ -58,16 +62,19 @@ fun DetailsScreen(navController: NavHostController, productId: String ) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp)
+
         ) {
             IconButton(
                 onClick = { navController.popBackStack() },
-                modifier = Modifier.align(Alignment.CenterStart)
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .offset(x = (-20).dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.back_icon),
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_back),
                     contentDescription = "Back",
-                    modifier = Modifier.fillMaxSize()
-                        .padding(4.dp)
+                    tint = Color(0xFF0066CC),
+                    modifier = Modifier.padding(10.dp)
                 )
             }
 
@@ -88,17 +95,17 @@ fun DetailsScreen(navController: NavHostController, productId: String ) {
             Image(
                 painter = painterResource(id = R.drawable.perfume1), // ضع الصورة في مجلد drawable
                 contentDescription = "Product",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
-                    .height(200.dp)
+                    .height(250.dp)
                     .clip(RoundedCornerShape(16.dp)),
-                contentScale = ContentScale.FillBounds
             )
             IconButton(
                 onClick = { isFavorite = !isFavorite },
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(6.dp)
+                    .padding(8.dp)
                     .background(Color.Black.copy(alpha = 0.8f), CircleShape)
                     .size(28.dp)
             ) {
@@ -126,6 +133,8 @@ fun DetailsScreen(navController: NavHostController, productId: String ) {
             }
         }
 
+        Spacer(modifier = Modifier.height(8.dp))
+
         Text(
             text = "With a nocturnal influence, Coco Noir explores Mademoiselle Chanel’s ...",
             color = Color.Gray,
@@ -136,13 +145,13 @@ fun DetailsScreen(navController: NavHostController, productId: String ) {
 
         // Size selection
         Text("Select Size :", fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             listOf("50ml", "100ml", "150ml").forEach { size ->
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
-                        .background(if (selectedSize == size) Color(0xFF00CC66) else Color.LightGray)
+                        .background(if (selectedSize == size) Color(0xFF22C55E) else Color(0xFF7F7F7F))
                         .clickable { selectedSize = size }
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
@@ -164,15 +173,21 @@ fun DetailsScreen(navController: NavHostController, productId: String ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                    .border(1.dp, Color(0xFF176DBA), RoundedCornerShape(8.dp))
+                    .padding(horizontal = 4.dp,)
             ) {
-                IconButton(onClick = { if (quantity > 0) quantity-- }) {
-                    Icon(Icons.Default.Remove, contentDescription = "Decrease")
+                androidx.compose.material.IconButton(onClick = { if (quantity > 0) quantity-- }) {
+                    Text("-", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.Black)
                 }
-                Text("$quantity", fontWeight = FontWeight.Bold, modifier = Modifier.width(24.dp), textAlign = TextAlign.Center)
-                IconButton(onClick = { quantity++ }) {
-                    Icon(Icons.Default.Add, contentDescription = "Increase")
+                Text(
+                    "$quantity",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    color = Color(0xFF0B74DA)
+                )
+                androidx.compose.material.IconButton(onClick = { quantity++ }) {
+                    Text("+", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.Black)
                 }
             }
         }
@@ -186,15 +201,19 @@ fun DetailsScreen(navController: NavHostController, productId: String ) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Recommended", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            Text(
-                text = "See all",
-                color = Color(0xFF0B74DA),
-                fontSize = 14.sp,
-                modifier = Modifier.clickable {
-                    // TODO: Handle "See all" click (navigate to full list screen or show dialog)
-                }
-            )
+            Text("Recommended", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("See All", color = Color(0xFF0B74DA), fontSize = 14.sp)
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowRight,
+                    contentDescription = null,
+                    tint = Color(0xFF0B74DA),
+                    modifier = Modifier.size(18.dp)
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -215,12 +234,14 @@ fun DetailsScreen(navController: NavHostController, productId: String ) {
                 .fillMaxWidth()
                 .height(56.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFF6F00)),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
+            elevation = ButtonDefaults.elevation(6.dp)
         ) {
             Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = Color.White)
             Spacer(modifier = Modifier.width(8.dp))
             Text("Add To Cart", color = Color.White, fontWeight = FontWeight.Bold)
         }
+        Spacer(modifier = Modifier.height(36.dp))
     }
 }
 

@@ -21,7 +21,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
@@ -112,14 +111,16 @@ import androidx.media3.ui.PlayerView.SHOW_BUFFERING_ALWAYS
 
 @OptIn(UnstableApi::class)
 @Composable
-fun VideoPlayer(uri: Uri, isPlaying: Boolean, onPlaybackStarted: () -> Unit) {
+fun VideoPlayer(uri: Uri?, isPlaying: Boolean, onPlaybackStarted: () -> Unit) {
     val context = LocalContext.current
         var isPlayingVideo by remember { mutableStateOf(true) }
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
-            setMediaItem(MediaItem.fromUri(uri))
-            prepare()
-            playWhenReady = isPlaying
+            if (uri != null) {
+                setMediaItem(MediaItem.fromUri(uri))
+                prepare()
+                playWhenReady = isPlaying
+            }
         }
     }
 
