@@ -32,7 +32,7 @@ A modern Android app that merges the best of social media (vertical Reels browsi
 
 ### Main Screens
 
-| Reels Home                          | Reels Cart                         | Reels Comments                      |
+| Reels Home                          | Reels Comments                         | Reels Cart                      |
 |--------------------------------------|------------------------------------|-------------------------------------|
 | ![](screenshots/reels_home.jpg)      | ![](screenshots/reels_cart.jpg)    | ![](screenshots/reels_comment.jpg)  |
 
