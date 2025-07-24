@@ -86,10 +86,10 @@ fun ChangePasswordScreen(navController: NavController) {
             )
             SpacerHorizontalSmall()
             Text(
-                text = "Change Password",
+                text = "Reset Password",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF114B7F), // لون أزرق غامق
+                color = Color(0xFF114B7F),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),

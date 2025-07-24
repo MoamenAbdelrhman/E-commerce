@@ -136,7 +136,7 @@ fun ProductScreen(navController: NavHostController) {
                 products = filteredProducts,
                 navController = navController
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(4.dp))
         }
 
         item {
@@ -161,7 +161,7 @@ fun TopBarWithCart(navController: NavHostController) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Products",
+            text = "Shop Now",
             fontWeight = FontWeight.Bold,
             fontSize = 22.sp,
             modifier = Modifier.weight(1f),
@@ -313,7 +313,6 @@ fun SalesCard() {
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        // ✅ الوزن موضوع مباشرة على Box داخل الـ Row
         Box(
             modifier = Modifier
                 .weight(1f)
@@ -457,7 +456,7 @@ fun ProductCard(product: Product, onClick: () -> Unit) {
                     imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                     contentDescription = "Favorite",
                     tint = if (isFavorite) Color.Red else Color.Gray,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(20.dp)
                 )
             }
         }

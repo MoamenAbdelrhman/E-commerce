@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -32,6 +33,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.project.e_commerce.android.R
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 
@@ -39,6 +44,9 @@ import androidx.compose.ui.platform.LocalDensity
 @OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun SoundPageScreen(navController: NavHostController) {
+
+    var isPlaying by remember { mutableStateOf(false) }
+    var isFavorite by remember { mutableStateOf(false) }
 
     val soundImage = painterResource(id = R.drawable.electronics) // أو أي صورة مناسبة
     val soundTitle = "Original Sound"
@@ -123,6 +131,7 @@ fun SoundPageScreen(navController: NavHostController) {
                         .size(52.dp)
                         .clip(RoundedCornerShape(9.dp))
                         .background(Color.Black)
+                        .clickable { isPlaying = !isPlaying }
                 ) {
                     Image(
                         painter = soundImage,
@@ -138,7 +147,9 @@ fun SoundPageScreen(navController: NavHostController) {
                             .background(Color(0x66000000), RoundedCornerShape(9.dp))
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_play),
+                            painter = painterResource(
+                                id = if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
+                            ),
                             contentDescription = null,
                             tint = Color.White,
                             modifier = Modifier
@@ -188,21 +199,30 @@ fun SoundPageScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(6.dp))
 
             OutlinedButton(
-                onClick = { /*TODO*/ },
+                onClick = { isFavorite = !isFavorite },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 18.dp)
+                    .padding(horizontal = 36.dp)
                     .height(42.dp),
                 shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
-                    backgroundColor = Color(0xFFF7F7F7),
-                    contentColor = Color.Black
+                    backgroundColor = if (isFavorite) Color(0xFFffc107) else Color(0xFFF7F7F7),
+                    contentColor = if (isFavorite) Color.White else Color.Black
                 ),
-                border = BorderStroke(1.dp, Color(0xFFF7F7F7))
+                border = BorderStroke(1.dp, if (isFavorite) Color(0xFFffc107) else Color(0xFFF7F7F7))
             ) {
-                Icon(Icons.Default.BookmarkBorder, contentDescription = null, modifier = Modifier.size(20.dp))
+                Icon(
+                    imageVector = if (isFavorite) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = if (isFavorite) Color.White else Color.Black
+                )
                 Spacer(modifier = Modifier.width(7.dp))
-                Text("Add to Favorites", fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    "Add to Favorites",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
 
             Spacer(modifier = Modifier.height(6.dp))

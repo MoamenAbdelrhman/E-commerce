@@ -256,7 +256,7 @@ fun TrackOrderScreen(navController: NavHostController) {
 
         // Progress Steps
         OrderProgressBarPerfect(currentStep = orderStep)
-        Spacer(modifier = Modifier.height(42.dp))
+        Spacer(modifier = Modifier.height(48.dp))
 
 
         Button(

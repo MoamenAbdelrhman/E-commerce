@@ -59,16 +59,16 @@ fun PasswordChangedSuccessScreen(navController: NavController) {
             Icon(
                 painter = painterResource(id = R.drawable.star),
                 contentDescription = "Star Icon",
-                tint = Color(0xFF22C55E), // لون ذهبي للنجمة
+                tint = Color(0xFF22C55E),
                 modifier = Modifier
-                    .size(80.dp) // حجم النجمة أكبر لتكون خلفية
+                    .size(80.dp)
             )
             Icon(
                 painter = painterResource(id = R.drawable.ic_check_circle),
                 contentDescription = "Success Icon",
-                tint = Color.White, // لون أخضر نجاح
+                tint = Color.White,
                 modifier = Modifier
-                    .size(60.dp) // حجم أصغر لتظهر فوق النجمة
+                    .size(60.dp)
             )
         }
         Spacer(modifier = Modifier.height(24.dp))
@@ -90,7 +90,7 @@ fun PasswordChangedSuccessScreen(navController: NavController) {
                 navController.navigate(Screens.LoginScreen.route) {
                     popUpTo(Screens.SplashScreen.route) { inclusive = false }
                 }
-            }, // العودة إلى صفحة تسجيل الدخول
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),

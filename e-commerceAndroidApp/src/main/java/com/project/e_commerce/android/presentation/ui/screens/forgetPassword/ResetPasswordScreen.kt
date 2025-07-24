@@ -65,7 +65,7 @@ fun ResetPasswordScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Reset Password",
+            text = "OTP Code",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF114B7F),

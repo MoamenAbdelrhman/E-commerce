@@ -304,7 +304,7 @@ fun SearchScreen(navController: NavHostController) {
                 columns = GridCells.Fixed(2),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.height(700.dp)
+                modifier = Modifier.height(750.dp)
             ) {
                 items(filteredProducts.size) { index ->
                     val product = filteredProducts[index]

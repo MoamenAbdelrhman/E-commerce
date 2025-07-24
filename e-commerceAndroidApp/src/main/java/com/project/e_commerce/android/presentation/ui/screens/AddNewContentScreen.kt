@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -31,6 +32,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,6 +44,21 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.project.e_commerce.android.R
 
+data class SizeEntry(
+    var size: String = "",
+    var colors: MutableList<ColorEntry> = mutableListOf()
+)
+
+data class ColorEntry(
+    var color: String = "",
+    var quantity: String = ""
+)
+
+data class CategoryBehavior(
+    val units: List<String>,
+    val enableSize: Boolean,
+    val enableColor: Boolean
+)
 
 @Composable
 fun AddNewContentScreen(navController: NavHostController) {
@@ -66,6 +84,15 @@ fun AddNewContentScreen(navController: NavHostController) {
             productImageUris.addAll(uniqueUris)
         }
     }
+
+
+    val categoryBehaviors = mapOf(
+        "Perfumes" to CategoryBehavior(units = emptyList(), enableSize = true, enableColor = false),
+        "Clothing" to CategoryBehavior(units = listOf("XS", "S", "M", "L", "XL"), enableSize = true, enableColor = true),
+        "Furniture" to CategoryBehavior(units = emptyList(), enableSize = true, enableColor = false),
+        "Electronics" to CategoryBehavior(units = emptyList(), enableSize = false, enableColor = false),
+        "Accessories" to CategoryBehavior(units = listOf("one size"), enableSize = true, enableColor = true)
+    )
 
     Column(
         modifier = Modifier
@@ -245,11 +272,172 @@ fun AddNewContentScreen(navController: NavHostController) {
         // Category
         Text("Category", fontSize = 14.sp, fontWeight = FontWeight.Medium, color = Color(0xFF0066CC))
         Spacer(modifier = Modifier.height(4.dp))
+//        CategoryDropdown(
+//            selectedCategory = selectedCategory,
+//            onCategorySelected = { selectedCategory = it }
+//        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        var selectedCategory by remember { mutableStateOf("") }
+        var selectedCategoryBehavior by remember { mutableStateOf(CategoryBehavior(emptyList(), false, false)) }
+        var sizes by remember { mutableStateOf(mutableListOf<String>()) }
+        val colorQuantities = remember { mutableStateMapOf<String, MutableMap<String, String>>() }
+        val colorOptions = listOf("Red", "Blue", "Black", "White", "Yellow")
+
         CategoryDropdown(
             selectedCategory = selectedCategory,
-            onCategorySelected = { selectedCategory = it }
+            onCategorySelected = {
+                selectedCategory = it
+                selectedCategoryBehavior = categoryBehaviors[it] ?: CategoryBehavior(emptyList(), false, false)
+                sizes.clear()
+                colorQuantities.clear()
+            }
         )
         Spacer(modifier = Modifier.height(8.dp))
+
+
+        if (selectedCategoryBehavior.enableSize && selectedCategoryBehavior.enableColor) {
+            // --- ملابس/اكسسوارات ---
+            var selectedSize by remember { mutableStateOf("") }
+            DropdownWithStyle(
+                label = "Select Size",
+                options = selectedCategoryBehavior.units,
+                selectedOption = selectedSize,
+                onOptionSelected = { newSize ->
+                    selectedSize = newSize
+                }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            if (selectedSize.isNotBlank()) {
+                var selectedColor by remember { mutableStateOf("") }
+                var quantityInput by remember { mutableStateOf("") }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    DropdownWithStyle(
+                        label = "Select Color",
+                        options = colorOptions,
+                        selectedOption = selectedColor,
+                        onOptionSelected = { selectedColor = it },
+                        modifier = Modifier.weight(1f)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    OutlinedTextField(
+                        value = quantityInput,
+                        onValueChange = { if (it.all { char -> char.isDigit() }) quantityInput = it },
+                        placeholder = { Text("Qty") },
+                        modifier = Modifier.weight(0.6f),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(onClick = {
+                        if (selectedColor.isNotBlank() && quantityInput.isNotBlank()) {
+                            if (!sizes.contains(selectedSize)) sizes.add(selectedSize)
+                            if (colorQuantities[selectedSize] == null) colorQuantities[selectedSize] = mutableMapOf()
+                            colorQuantities[selectedSize]?.put(selectedColor, quantityInput)
+                            selectedColor = ""
+                            quantityInput = ""
+                        }
+                    }) { Text("Add") }
+                }
+            }
+        } else if (selectedCategoryBehavior.enableSize) {
+            Spacer(modifier = Modifier.height(8.dp))
+            // --- عطور/أثاث ...الخ ---
+            var customSize by remember { mutableStateOf("") }
+            var quantityInput by remember { mutableStateOf("") }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                OutlinedTextField(
+                    value = customSize,
+                    onValueChange = { if (it.all { char -> char.isDigit() }) customSize = it },
+                    placeholder = { Text("Size (ml)") },
+                    modifier = Modifier.weight(1f),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                OutlinedTextField(
+                    value = quantityInput,
+                    onValueChange = { if (it.all { char -> char.isDigit() }) quantityInput = it },
+                    placeholder = { Text("Qty") },
+                    modifier = Modifier.weight(1f),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(onClick = {
+                    if (customSize.isNotBlank() && quantityInput.isNotBlank()) {
+                        sizes.add(customSize)
+                        colorQuantities[customSize] = mutableMapOf("" to quantityInput)
+                        customSize = ""
+                        quantityInput = ""
+                    }
+                }) { Text("Add") }
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        // --- العرض النهائي الاحترافي ---
+        sizes.forEach { size ->
+            if (!selectedCategoryBehavior.enableColor) {
+                val qty = colorQuantities[size]?.get("") ?: ""
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                        .border(1.dp, Color(0xFFB3C1D1), RoundedCornerShape(8.dp))
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                ) {
+                    Text("Size: ", fontWeight = FontWeight.SemiBold, color = Color(0xFF555555))
+                    Text(size, modifier = Modifier.padding(horizontal = 4.dp), fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.width(12.dp))
+                    Text("Qty: ", color = Color.Gray)
+                    Text(qty, color = Color(0xFF0066CC), fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.weight(1f))
+                    IconButton(
+                        onClick = {
+                            sizes.remove(size)
+                            colorQuantities.remove(size)
+                        }
+                    ) { Icon(Icons.Default.Close, contentDescription = "Remove", tint = Color.Red) }
+                }
+            } else {
+                colorQuantities[size]?.forEach { (color, qty) ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 3.dp)
+                            .border(1.dp, Color(0xFFB3C1D1), RoundedCornerShape(8.dp))
+                            .padding(horizontal = 8.dp, vertical = 2.dp)
+                    ) {
+                        Text("Size: $size", fontWeight = FontWeight.Medium, color = Color(0xFF174378))
+                        Spacer(Modifier.width(12.dp))
+                        Text("Color: $color", fontWeight = FontWeight.Normal, color = Color(0xFF238576))
+                        Spacer(Modifier.width(12.dp))
+                        Text("Qty: $qty", fontWeight = FontWeight.Bold, color = Color(0xFF0066CC))
+                        Spacer(Modifier.weight(1f))
+                        IconButton(
+                            onClick = {
+                                colorQuantities[size]?.remove(color)
+                                if (colorQuantities[size]?.isEmpty() == true) {
+                                    sizes.remove(size)
+                                    colorQuantities.remove(size)
+                                }
+                            }
+                        ) { Icon(Icons.Default.Close, contentDescription = "Remove", tint = Color.Red) }
+                    }
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+
+        if (!selectedCategoryBehavior.enableSize && !selectedCategoryBehavior.enableColor) {
+            Spacer(modifier = Modifier.height(8.dp))
+            CustomOutlinedTextField(
+                value = productQuantity,
+                onValueChange = { productQuantity = it },
+                label = "Quantity",
+                placeholder = "Enter quantity"
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
 
         // Price & Quantity
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -258,13 +446,6 @@ fun AddNewContentScreen(navController: NavHostController) {
                 onValueChange = { productPrice = it },
                 label = "Price",
                 placeholder = "Enter price",
-                modifier = Modifier.weight(1f)
-            )
-            CustomOutlinedTextField(
-                value = productQuantity,
-                onValueChange = { productQuantity = it },
-                label = "No. of available items",
-                placeholder = "Enter number",
                 modifier = Modifier.weight(1f)
             )
         }
@@ -286,6 +467,54 @@ fun AddNewContentScreen(navController: NavHostController) {
         Spacer(modifier = Modifier.height(48.dp))
     }
 
+}
+
+@Composable
+fun DropdownWithStyle(
+    label: String,
+    options: List<String>,
+    selectedOption: String,
+    onOptionSelected: (String) -> Unit,
+    modifier: Modifier = Modifier.fillMaxWidth()
+) {
+    var expanded by remember { mutableStateOf(false) }
+    Box(modifier = modifier.clickable { expanded = true }) {
+        OutlinedTextField(
+            value = selectedOption,
+            onValueChange = {},
+            readOnly = true,
+            enabled = false,
+            placeholder = { Text(label, color = Color(0xFFB3C1D1)) },
+            trailingIcon = {
+                Icon(Icons.Default.ArrowDropDown, contentDescription = null, modifier = Modifier.rotate(if (expanded) 180f else 0f))
+            },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color(0xFF1B7ACE),
+                unfocusedBorderColor = Color(0xFFB3C1D1),
+                disabledBorderColor = Color(0xFFB3C1D1),
+                backgroundColor = Color.White,
+                disabledTextColor = Color.Black,
+                disabledPlaceholderColor = Color(0xFFB3C1D1)
+            )
+        )
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            options.forEach {
+                DropdownMenuItem(onClick = {
+                    onOptionSelected(it)
+                    expanded = false
+                }) {
+                    Text(it)
+                }
+            }
+        }
+    }
 }
 
 
@@ -343,6 +572,42 @@ fun CategoryDropdown(
                     }
                 ) {
                     Text(category)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun MultiSelectChips(
+    label: String,
+    options: List<String>,
+    selectedItems: Set<String>,
+    onChange: (Set<String>) -> Unit
+) {
+    Column {
+        Text(label, fontWeight = FontWeight.Medium, color = Color(0xFF0066CC))
+        Spacer(Modifier.height(4.dp))
+        Row(Modifier.horizontalScroll(rememberScrollState())) {
+            options.forEach { item ->
+                val isSelected = selectedItems.contains(item)
+                Box(
+                    Modifier
+                        .padding(end = 6.dp)
+                        .border(
+                            width = 1.dp,
+                            color = if (isSelected) Color(0xFF1B7ACE) else Color(0xFFB3C1D1),
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                        .background(if (isSelected) Color(0x221B7ACE) else Color.White, shape = RoundedCornerShape(16.dp))
+                        .clickable {
+                            onChange(
+                                if (isSelected) selectedItems - item else selectedItems + item
+                            )
+                        }
+                        .padding(horizontal = 14.dp, vertical = 7.dp)
+                ) {
+                    Text(item, color = if (isSelected) Color(0xFF1B7ACE) else Color.Gray)
                 }
             }
         }
