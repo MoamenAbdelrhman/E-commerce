@@ -10,10 +10,12 @@
     </style>
 
     <!-- Launch Theme (Splash Screen) -->
-    <style name="AppTheme.Launcher" >
+    <style name="AppTheme.Launcher" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowBackground">@drawable/launch_screen</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
     </style>
-
 </resources>

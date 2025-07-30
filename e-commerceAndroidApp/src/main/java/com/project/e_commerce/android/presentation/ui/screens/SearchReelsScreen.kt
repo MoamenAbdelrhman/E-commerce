@@ -60,6 +60,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.ui.focus.focusRequester
+import com.project.e_commerce.android.presentation.ui.navigation.Screens
 
 // ------------- بيانات وهمية ----------
 data class Reel(
@@ -212,7 +213,7 @@ fun SearchReelsAndUsersScreen(navController: NavHostController) {
         ) { page ->
             when (page) {
                 0 -> ReelsGridContent(query, sampleReels)
-                1 -> UsersListContent(query, sampleUsers)
+                1 -> UsersListContent(query, sampleUsers,navController)
             }
         }
     }
@@ -280,7 +281,11 @@ fun ReelsGridContent(query: String, reels: List<Reel>) {
 }
 
 @Composable
-fun UsersListContent(query: String, users: List<User>) {
+fun UsersListContent(
+    query: String,
+    users: List<User>,
+    navController: NavHostController
+) {
     val filteredUsers = users.filter {
         it.name.contains(query, ignoreCase = true) || it.username.contains(query, ignoreCase = true)
     }
@@ -305,7 +310,9 @@ fun UsersListContent(query: String, users: List<User>) {
                         .clickable(
                             indication = null, // هذا يلغي تأثير الـ ripple تمامًا
                             interactionSource = remember { MutableInteractionSource() }
-                        ) { /* Open Profile */ },
+                        ) {
+                            navController.navigate(Screens.ReelsScreen.UserProfileScreen.route)
+                          },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Image(

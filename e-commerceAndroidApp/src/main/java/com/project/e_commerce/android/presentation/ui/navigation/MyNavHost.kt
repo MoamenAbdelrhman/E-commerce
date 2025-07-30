@@ -8,6 +8,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.project.e_commerce.android.presentation.ui.navigation.Screens.FollowListScreen
 import com.project.e_commerce.android.presentation.ui.screens.AddNewContentScreen
 import com.project.e_commerce.android.presentation.ui.screens.AllProductsScreen
 import com.project.e_commerce.android.presentation.ui.screens.CartScreen
@@ -15,6 +16,7 @@ import com.project.e_commerce.android.presentation.ui.screens.DetailsScreen
 import com.project.e_commerce.android.presentation.ui.screens.EditProfileScreen
 import com.project.e_commerce.android.presentation.ui.screens.ExploreScreenWithHeader
 import com.project.e_commerce.android.presentation.ui.screens.FavouriteScreen
+import com.project.e_commerce.android.presentation.ui.screens.FollowListScreen
 import com.project.e_commerce.android.presentation.ui.screens.NotificationScreen
 import com.project.e_commerce.android.presentation.ui.screens.OrdersHistoryScreen
 import com.project.e_commerce.android.presentation.ui.screens.ProductScreen
@@ -24,6 +26,7 @@ import com.project.e_commerce.android.presentation.ui.screens.SearchScreen
 import com.project.e_commerce.android.presentation.ui.screens.SettingsScreen
 import com.project.e_commerce.android.presentation.ui.screens.SoundPageScreen
 import com.project.e_commerce.android.presentation.ui.screens.TrackOrderScreen
+import com.project.e_commerce.android.presentation.ui.screens.UserProfileScreen
 import com.project.e_commerce.android.presentation.ui.screens.createAccountScreen.CreateAnAccountScreen
 import com.project.e_commerce.android.presentation.ui.screens.loginScreen.LoginScreen
 import com.project.e_commerce.android.presentation.ui.screens.profileScreen.ProfileScreen
@@ -68,6 +71,9 @@ fun MyNavHost(navController: NavHostController, startDestination: String) {
         }
         composable(Screens.ReelsScreen.SoundPageScreen.route) {
             SoundPageScreen( navController)
+        }
+        composable(Screens.ReelsScreen.UserProfileScreen.route) {
+            UserProfileScreen( navController)
         }
 
         composable(Screens.ProductScreen.route) { ProductScreen(navController) }
@@ -147,6 +153,27 @@ fun MyNavHost(navController: NavHostController, startDestination: String) {
         composable(Screens.CartScreen.PaymentScreen.route){ com.project.e_commerce.android.presentation.ui.screens.PaymentScreen(navController = navController) }
 
 
+
+        composable(
+            route = "follow_list_screen/{username}/{startTab}/{showFriendsTab}",
+            arguments = listOf(
+                navArgument("username") { type = NavType.StringType },
+                navArgument("startTab") { type = NavType.IntType },
+                navArgument("showFriendsTab") { type = NavType.BoolType }
+            )
+        ) { backStackEntry ->
+            val username = backStackEntry.arguments?.getString("username") ?: ""
+            val startTab = backStackEntry.arguments?.getInt("startTab") ?: 0
+            val showFriendsTab = backStackEntry.arguments?.getBoolean("showFriendsTab") ?: true
+
+            FollowListScreen(
+                navController = navController,
+                username = username,
+                isCurrentUser = showFriendsTab,
+                startTabIndex = startTab,
+                showFriendsTab = showFriendsTab
+            )
+        }
 
     }
 }

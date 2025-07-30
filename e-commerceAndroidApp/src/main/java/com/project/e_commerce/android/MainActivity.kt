@@ -103,8 +103,7 @@ class MainActivity : ComponentActivity() {
             MyApplicationTheme {
                 Surface(
                     modifier = Modifier
-                        .fillMaxSize()
-                        ,
+                        .fillMaxSize(),
                     color = Color.Transparent
                 ) {
                     val navController = rememberNavController()

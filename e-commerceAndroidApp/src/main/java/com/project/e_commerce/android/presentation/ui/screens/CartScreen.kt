@@ -30,6 +30,28 @@ import com.project.e_commerce.android.presentation.ui.navigation.Screens
 @Composable
 fun CartScreen(navController: NavController) {
 
+    val isLoggedIn = remember { mutableStateOf(false) } // Replace with actual login state
+    var showLoginPrompt by remember { mutableStateOf(true) }
+
+    if (!isLoggedIn.value && showLoginPrompt) {
+        RequireLoginPrompt(
+            onLogin = {
+                showLoginPrompt = false
+                navController.navigate(Screens.LoginScreen.route)
+            },
+            onSignUp = {
+                showLoginPrompt = false
+                navController.navigate(Screens.LoginScreen.CreateAccountScreen.route)
+            },
+            onDismiss = {
+                /* لا شيء - يظل ظاهرًا */
+            },
+            showCloseButton = false
+        )
+        return
+    }
+
+
     var cartItems by remember {
         mutableStateOf(
             listOf(

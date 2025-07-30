@@ -19,6 +19,8 @@ sealed class Screens(val route: String, val title : String? = null, val icon : I
         object SearchReelsAndUsersScreen : Screens(route = "search_reels_screen")
         object ExploreScreen : Screens(route = "explore")
         object SoundPageScreen : Screens(route = "sound")
+        object UserProfileScreen : Screens(route = "user_profile_screen")
+
     }
 
     object ProductScreen : Screens(title = "Products",route = "product_screen",icon = R.drawable.ic_products_filled) {
@@ -32,6 +34,10 @@ sealed class Screens(val route: String, val title : String? = null, val icon : I
         object PaymentScreen : Screens(route = "payment_screen")
     }
 
+    object FollowListScreen : Screens("follow_list_screen/{username}/{startTab}/{showFriendsTab}") {
+        fun createRoute(username: String, startTab: Int, showFriendsTab: Boolean) =
+            "follow_list_screen/$username/$startTab/$showFriendsTab"
+    }
 
     object ProfileScreen : Screens(title = "Profile", route = "profile_screen",icon = R.drawable.ic_profile, ){
 

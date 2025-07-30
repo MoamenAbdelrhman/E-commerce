@@ -3,7 +3,9 @@ package com.project.e_commerce.android.presentation.ui.screens.profileScreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -29,9 +31,32 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.project.e_commerce.android.R
 import com.project.e_commerce.android.presentation.ui.navigation.Screens
+import com.project.e_commerce.android.presentation.ui.screens.RequireLoginPrompt
 
 @Composable
 fun ProfileScreen(navController: NavHostController) {
+
+    val isLoggedIn = remember { mutableStateOf(false) } // Replace with real auth state
+    var showLoginPrompt by remember { mutableStateOf(true) }
+
+    if (!isLoggedIn.value && !showLoginPrompt) {
+        RequireLoginPrompt(
+            onLogin = {
+                showLoginPrompt = false
+                navController.navigate(Screens.LoginScreen.route)
+            },
+            onSignUp = {
+                showLoginPrompt = false
+                navController.navigate(Screens.LoginScreen.CreateAccountScreen.route)
+            },
+            onDismiss = {
+                /* لا تفعل شيئًا هنا لتثبيت الواجهة */
+            },
+            showCloseButton = false
+        )
+        return
+    }
+
     var selectedTabIndex by remember { mutableStateOf(0) }
     val tabs = listOf(
         Pair(R.drawable.ic_reels, R.drawable.ic_reels),
@@ -91,50 +116,78 @@ fun ProfileScreen(navController: NavHostController) {
             }
         }
 
-
-        item {
-            // Profile Image
-            Image(
-                painter = painterResource(id = R.drawable.profile),
-                contentDescription = null,
-                modifier = Modifier.size(100.dp).clip(CircleShape)
-            )
-        }
-
         item { Spacer(modifier = Modifier.height(8.dp)) }
 
-        item {
-            // Name & Username
-            Text("Jenny Wilson", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFF0D3D67))
-            Text("@jenny_wilson", fontSize = 13.sp, color = Color.Gray)
-        }
 
-        item { Spacer(modifier = Modifier.height(12.dp)) }
 
         item {
             // Stats
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 56.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp),
+                contentAlignment = Alignment.Center
             ) {
-                ProfileStat("122", "Following")
-                Divider(
-                    color = Color.LightGray,
-                    modifier = Modifier
-                        .height(20.dp)
-                        .width(0.5.dp)
-                )
-                ProfileStat("150", "Followers")
-                Divider(
-                    color = Color.LightGray,
-                    modifier = Modifier
-                        .height(20.dp)
-                        .width(0.5.dp)
-                )
-                ProfileStat("200", "Likes")
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ProfileStat("122", "Following") {
+                        navController.navigate(
+                            Screens.FollowListScreen.createRoute(
+                                username = "jenny_wilson",
+                                startTab = 1,
+                                showFriendsTab = true
+                            )
+                        )
+                    }
+                    Image(
+                        painter = painterResource(id = R.drawable.profile),
+                        contentDescription = null,
+                        modifier = Modifier.size(100.dp).clip(CircleShape)
+                    )
+                    ProfileStat("150K", "Followers") {
+                        navController.navigate(
+                            Screens.FollowListScreen.createRoute(
+                                username = "jenny_wilson",
+                                startTab = 0,
+                                showFriendsTab = true
+                            )
+                        )
+                    }
+                }
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
         }
+        item {
+            // Name & Username
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "Jenny Wilson",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF0D3D67)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.verified_badge),
+                    contentDescription = "Verified",
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+            Text("@jenny_wilson", fontSize = 13.sp, color = Color.Gray)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        item {
+            ProfileStat("1.5M", "Likes")
+        }
+
+
 
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
@@ -176,7 +229,12 @@ fun ProfileScreen(navController: NavHostController) {
                     .height(42.dp),
                 elevation = ButtonDefaults.elevation(defaultElevation = 4.dp)
             ) {
-                Text("+ Add New Post", fontSize = 15.sp, color = Color.White, fontWeight = FontWeight.Bold)
+                Text(
+                    "+ Add New Post",
+                    fontSize = 15.sp,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
 
@@ -199,7 +257,7 @@ fun ProfileScreen(navController: NavHostController) {
                             ),
                             contentDescription = null,
                             tint = if (selectedTabIndex == index) Color(0xFFFF6F00) else Color.Gray,
-                            modifier = Modifier.size( if (index == 0) 30.dp else 20.dp )
+                            modifier = Modifier.size(if (index == 0) 30.dp else 20.dp)
                         )
                     }
                 }
@@ -221,13 +279,18 @@ fun ProfileScreen(navController: NavHostController) {
 }
 
 
+
 @Composable
-fun ProfileStat(number: String, label: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(number,color = Color(0xFF0D3D67), fontWeight = FontWeight.Bold, fontSize = 16.sp)
-        Text(label, fontSize = 12.sp, color = Color.Gray)
+fun ProfileStat(number: String, label: String, onClick: () -> Unit = {}) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.clickable(onClick = onClick)
+    ) {
+        Text(number, color = Color(0xFF0D3D67), fontWeight = FontWeight.Bold, fontSize = 18.sp)
+        Text(label, fontSize = 14.sp, color = Color.Gray)
     }
 }
+
 
 @Composable
 fun SimpleReelGrid(navController: NavHostController) {
@@ -280,7 +343,7 @@ fun MixedSavedGrid(navController: NavHostController) {
     val savedItems = listOf(
         R.drawable.img1, R.drawable.img2, R.drawable.img3, R.drawable.img4,
         R.drawable.img1, R.drawable.img2, R.drawable.img3, R.drawable.img4,
-        )
+    )
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
         modifier = Modifier
@@ -313,7 +376,7 @@ fun LikedReelGrid(navController: NavHostController) {
         R.drawable.img4, R.drawable.img2, R.drawable.img3, R.drawable.perfume1,
         R.drawable.img4, R.drawable.img2, R.drawable.img3, R.drawable.perfume1,
         R.drawable.img4, R.drawable.img2, R.drawable.img3, R.drawable.perfume1,
-        )
+    )
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
         modifier = Modifier
@@ -396,8 +459,8 @@ fun SimpleProductGrid(navController: NavHostController) {
                     Text(
                         stock,
                         color = if (stock == "Out of Stock") Color(0xFFEB1919)
-                                else if (stock == "In Stock") Color(0xFF22C55E)
-                                else Color.Gray,
+                        else if (stock == "In Stock") Color(0xFF22C55E)
+                        else Color.Gray,
                         fontSize = 12.sp
                     )
                     Text(

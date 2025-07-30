@@ -78,6 +78,7 @@ import com.project.e_commerce.android.presentation.ui.screens.HeaderStyle
 import kotlinx.coroutines.delay
 import com.google.accompanist.pager.*
 import com.project.e_commerce.android.presentation.ui.screens.HeartAnimation
+import com.project.e_commerce.android.presentation.ui.screens.RequireLoginPrompt
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 
@@ -127,9 +128,12 @@ fun ReelsView(
 
     val showSheet = remember { mutableStateOf(false) }
     val sheetTab = remember { mutableStateOf(SheetTab.Comments) }
+    var showLoginPrompt by remember { mutableStateOf(false) }
+    val isLoggedIn = remember { mutableStateOf(false) } // Replace this with real login state
+
 
     Box(modifier = Modifier.fillMaxSize().imePadding()
-        ) {
+    ) {
         // المحتوى الرئيسي
         ReelsList(
             navController = navController,
@@ -142,9 +146,14 @@ fun ReelsView(
             viewModel = viewModel,
             onClickMoreButton = { /* ... */ },
             onClickCartButton = {
+                if (!isLoggedIn.value) {
+                    showLoginPrompt = true
+                }
                 showSheet.value = true
                 sheetTab.value = SheetTab.Ratings
-            }
+            },
+            isLoggedIn = isLoggedIn.value,
+            setShowLoginPrompt = { showLoginPrompt = it }
         )
 
         // Overlay Custom BottomSheet
@@ -170,6 +179,24 @@ fun ReelsView(
                     mainUiStateViewModel.setBottomSheetVisible(false)
                 },
                 viewModel = viewModel
+            )
+        }
+
+
+
+        if (showLoginPrompt) {
+            RequireLoginPrompt(
+                onLogin = {
+                    showLoginPrompt = false
+                    navController.navigate(Screens.LoginScreen.route)
+                },
+                onSignUp = {
+                    showLoginPrompt = false
+                    navController.navigate(Screens.LoginScreen.CreateAccountScreen.route)
+                },
+                onDismiss = {
+                    showLoginPrompt = false
+                }
             )
         }
 
@@ -208,7 +235,7 @@ fun ReelsTopHeader(
         HeaderStyle.TRANSPARENT_WHITE_TEXT -> Color.White
         HeaderStyle.WHITE_BLACK_TEXT -> Color.Black
     }
-    val underlineColor = if (selectedTab == "Explore") Color.Black else Color.White
+    val underlineColor = if (selectedTab == "Explore") Color(0xFF0066CC) else Color.White
 
     Row(
         modifier = modifier
@@ -251,7 +278,7 @@ fun ReelsTopHeader(
             Icon(
                 imageVector = Icons.Default.Search,
                 contentDescription = "Search",
-                tint = textColor, // استخدم لون الكتابة نفسه
+                tint = if (selectedTab == "Explore") Color(0xFF0066CC) else textColor,
                 modifier = Modifier.size(26.dp)
             )
         }
@@ -303,7 +330,9 @@ fun ReelsList(
     viewModel: ReelsScreenViewModel,
     onClickCartButton: () -> Unit,
     onClickMoreButton: () -> Unit,
-    reelsList: List<Reels>
+    reelsList: List<Reels>,
+    isLoggedIn: Boolean,
+    setShowLoginPrompt: (Boolean) -> Unit
 ) {
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { reelsList.size })
     val currentPage = pagerState.currentPage
@@ -324,7 +353,11 @@ fun ReelsList(
                         onDoubleTap = { offset ->
                             showHeart = true
                             heartPosition = offset
-                            viewModel.forceLoveReels(reelsList[page].id)
+                            if (!isLoggedIn) {
+                                setShowLoginPrompt(true)
+                            } else {
+                                viewModel.forceLoveReels(reelsList[page].id)
+                            }
                         }
                     )
                 }
@@ -421,13 +454,17 @@ fun ReelsList(
             )
 
             ReelContent(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .align(Alignment.BottomStart),
                 navController = navController,
                 reel = reelsList[page],
                 viewModel = viewModel,
                 onClickCommentButton = onClickCommentButton,
                 onClickMoreButton = onClickMoreButton,
                 onClickCartButton = onClickCartButton,
-                modifier = Modifier.align(Alignment.BottomStart)
+                setShowLoginPrompt = setShowLoginPrompt,
+                isLoggedIn = isLoggedIn
             )
         }
     }
@@ -436,13 +473,15 @@ fun ReelsList(
 
 @Composable
 fun ReelContent(
+    modifier: Modifier,
     navController: NavHostController,
     reel: Reels,
     viewModel: ReelsScreenViewModel,
     onClickCommentButton: () -> Unit,
     onClickCartButton: () -> Unit,
     onClickMoreButton: () -> Unit,
-    modifier: Modifier = Modifier
+    setShowLoginPrompt: (Boolean) -> Unit,
+    isLoggedIn: Boolean,
 ) {
     Row(
         modifier = modifier
@@ -456,7 +495,7 @@ fun ReelContent(
                 .weight(1f)
                 .padding(end = 16.dp)
         ) {
-            UserInfo(reel = reel)
+            UserInfo(reel = reel, navController = navController, isLoggedIn = isLoggedIn, setShowLoginPrompt = setShowLoginPrompt)
             Spacer(modifier = Modifier.height(8.dp))
             ReelDescription(description = reel.contentDescription)
             Spacer(modifier = Modifier.height(4.dp))
@@ -475,7 +514,13 @@ fun ReelContent(
         InteractionButtons(
             navController = navController,
             reel = reel,
-            onClickLoveButton = { viewModel.onClackLoveReelsButton(reel.id) },
+            onClickLoveButton = {
+                if (!isLoggedIn) {
+                    setShowLoginPrompt(true)
+                } else {
+                    viewModel.onClackLoveReelsButton(reel.id)
+                }
+            },
             onClickCommentButton = onClickCommentButton,
             onClickCartButton = onClickCartButton,
             onClickMoreButton = onClickMoreButton
@@ -486,7 +531,12 @@ fun ReelContent(
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun UserInfo(reel: Reels) {
+fun UserInfo(
+    reel: Reels,
+    navController: NavHostController,
+    isLoggedIn: Boolean,
+    setShowLoginPrompt: (Boolean) -> Unit
+) {
     var isFollowed by remember { mutableStateOf(false) }
 
 
@@ -498,7 +548,10 @@ fun UserInfo(reel: Reels) {
             text = reel.userName,
             color = Color.White,
             fontSize = 14.sp,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.clickable {
+                navController.navigate(Screens.ReelsScreen.UserProfileScreen.route)
+            }
         )
 
         Box(
@@ -516,7 +569,13 @@ fun UserInfo(reel: Reels) {
 
                     shape = RoundedCornerShape(8.dp)
                 )
-                .clickable { isFollowed = !isFollowed }
+                .clickable {
+                    if (!isLoggedIn) {
+                        setShowLoginPrompt(true)
+                    } else {
+                        isFollowed = !isFollowed
+                    }
+                }
                 .height(26.dp)
                 .padding(horizontal = 12.dp)
             ,
@@ -533,6 +592,7 @@ fun UserInfo(reel: Reels) {
 }
 
 
+
 @Composable
 fun OfferCard(
     productName: String = "Hanger Shirt",
@@ -546,7 +606,7 @@ fun OfferCard(
             .offset(x= (-12).dp)
             .background(Color(0xCC222222), shape = RoundedCornerShape(16.dp))
             .padding(8.dp)
-            ,
+        ,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -603,13 +663,13 @@ fun OfferCard(
                 }
 
             }
-                Text(
-                    text = productPrice,
-                    color = Color(0xFFFFEB3B),
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.offset(y= (4).dp)
-                )
+            Text(
+                text = productPrice,
+                color = Color(0xFFFFEB3B),
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.offset(y= (4).dp)
+            )
 
         }
     }
@@ -653,14 +713,32 @@ fun InteractionButtons(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        GlideImage(
-            model = reel.userImage,
-            contentScale = ContentScale.Crop,
+        Box(
             modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape),
-            contentDescription = "User Avatar"
-        )
+                .size(46.dp) // مساحة أكبر لتضمين التوثيق
+        ) {
+            GlideImage(
+                model = reel.userImage,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(40.dp)
+                    .align(Alignment.TopCenter)
+                    .clip(CircleShape)
+                    .clickable {
+                        navController.navigate(Screens.ReelsScreen.UserProfileScreen.route)
+                    },
+                contentDescription = "User Avatar"
+            )
+
+            Image(
+                painter = painterResource(id = R.drawable.verified_badge),
+                contentDescription = "Verified Badge",
+                modifier = Modifier
+                    .size(18.dp)
+                    .offset(y= (2).dp)
+                    .align(Alignment.BottomCenter)
+            )
+        }
         InteractionButton(
             painter = painterResource(
                 id = if (reel.love.isLoved) R.drawable.ic_love_checked else R.drawable.ic_love

@@ -46,202 +46,273 @@ import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun DetailsScreen(navController: NavHostController, productId: String ) {
+
+    val isLoggedIn = remember { mutableStateOf(false) } // Replace with actual auth logic
+    var showLoginPrompt by remember { mutableStateOf(false) }
+
+
     var selectedSize by remember { mutableStateOf("100ml") }
     var quantity by remember { mutableStateOf(0) }
     var isFavorite by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp)
-    ) {
-        // Header
-        Box(
+    Box(modifier = Modifier.fillMaxSize()) {
+
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-
+                .fillMaxSize()
+                .background(Color.White)
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp)
         ) {
-            IconButton(
-                onClick = { navController.popBackStack() },
+            // Header
+            Box(
                 modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .offset(x = (-20).dp)
+                    .fillMaxWidth()
+                    .height(48.dp)
+
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_back),
-                    contentDescription = "Back",
-                    tint = Color(0xFF0066CC),
-                    modifier = Modifier.padding(10.dp)
-                )
-            }
-
-            Text(
-                text = "Details",
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                color = Color(0xFF0066CC),
-                modifier = Modifier.align(Alignment.Center),
-                textAlign = TextAlign.Center
-            )
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Product Image
-        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
-            Image(
-                painter = painterResource(id = R.drawable.perfume1), // ضع الصورة في مجلد drawable
-                contentDescription = "Product",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .height(250.dp)
-                    .clip(RoundedCornerShape(16.dp)),
-            )
-            IconButton(
-                onClick = { isFavorite = !isFavorite },
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp)
-                    .background(Color.Black.copy(alpha = 0.8f), CircleShape)
-                    .size(28.dp)
-            ) {
-                Icon(
-                    imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                    contentDescription = "Favorite",
-                    tint = if (isFavorite) Color.Red else Color.Gray,
-                    modifier = Modifier.size(18.dp)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Name & Rating
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Coco Noir Chanel", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Star, contentDescription = "Rating", tint = Color(0xFFFFC107))
-                Text("4.8", fontWeight = FontWeight.Bold)
-            }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = "With a nocturnal influence, Coco Noir explores Mademoiselle Chanel’s ...",
-            color = Color.Gray,
-            fontSize = 14.sp
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Size selection
-        Text("Select Size :", fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            listOf("50ml", "100ml", "150ml").forEach { size ->
-                Box(
+                IconButton(
+                    onClick = { navController.popBackStack() },
                     modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(if (selectedSize == size) Color(0xFF22C55E) else Color(0xFF7F7F7F))
-                        .clickable { selectedSize = size }
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .align(Alignment.CenterStart)
+                        .offset(x = (-20).dp)
                 ) {
-                    Text(text = size, color = Color.White)
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_back),
+                        contentDescription = "Back",
+                        tint = Color(0xFF0066CC),
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+
+                Text(
+                    text = "Details",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = Color(0xFF0066CC),
+                    modifier = Modifier.align(Alignment.Center),
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Product Image
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
+                Image(
+                    painter = painterResource(id = R.drawable.perfume1), // ضع الصورة في مجلد drawable
+                    contentDescription = "Product",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .height(250.dp)
+                        .clip(RoundedCornerShape(16.dp)),
+                )
+                IconButton(
+                    onClick = {
+                        if (!isLoggedIn.value) {
+                            showLoginPrompt = true
+                        } else {
+                            isFavorite = !isFavorite
+                        }
+                    },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(6.dp)
+                        .background(Color.White.copy(alpha = 0.8f), CircleShape)
+                        .size(30.dp)
+                ) {
+                    Icon(
+                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = "Favorite",
+                        tint = if (isFavorite) Color.Red else Color(0xFF0B74DA),
+                        modifier = Modifier.size(22.dp)
+                    )
                 }
             }
-        }
 
-        Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-        // Price + Counter
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("100$", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = Color(0xFFFF5722))
-
+            // Name & Rating
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .border(1.dp, Color(0xFF176DBA), RoundedCornerShape(8.dp))
-                    .padding(horizontal = 4.dp,)
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                androidx.compose.material.IconButton(onClick = { if (quantity > 0) quantity-- }) {
-                    Text("-", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.Black)
-                }
-                Text(
-                    "$quantity",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    color = Color(0xFF0B74DA)
-                )
-                androidx.compose.material.IconButton(onClick = { quantity++ }) {
-                    Text("+", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                Text("Coco Noir Chanel", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Default.Star,
+                        contentDescription = "Rating",
+                        tint = Color(0xFFFFC107)
+                    )
+                    Text("4.8", fontWeight = FontWeight.Bold)
                 }
             }
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-        // Recommended Section
-        // Recommended Section with "See all"
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text("Recommended", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            Text(
+                text = "With a nocturnal influence, Coco Noir explores Mademoiselle Chanel’s ...",
+                color = Color.Gray,
+                fontSize = 14.sp
+            )
 
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Size selection
+            Text("Select Size :", fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf("50ml", "100ml", "150ml").forEach { size ->
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(
+                                if (selectedSize == size) Color(0xFF22C55E) else Color(
+                                    0xFF7F7F7F
+                                )
+                            )
+                            .clickable { selectedSize = size }
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        Text(text = size, color = Color.White)
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Price + Counter
             Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    "100$",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = Color(0xFFFF5722)
+                )
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .border(1.dp, Color(0xFF176DBA), RoundedCornerShape(8.dp))
+                        .padding(horizontal = 4.dp,)
+                ) {
+                    androidx.compose.material.IconButton(onClick = { if (quantity > 0) quantity-- }) {
+                        Text(
+                            "-",
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
+                    }
+                    Text(
+                        "$quantity",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        color = Color(0xFF0B74DA)
+                    )
+                    androidx.compose.material.IconButton(onClick = { quantity++ }) {
+                        Text(
+                            "+",
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Recommended Section
+            // Recommended Section with "See all"
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("See All", color = Color(0xFF0B74DA), fontSize = 14.sp)
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowRight,
-                    contentDescription = null,
-                    tint = Color(0xFF0B74DA),
-                    modifier = Modifier.size(18.dp)
+                Text("Recommended", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("See All", color = Color(0xFF0B74DA), fontSize = 14.sp)
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowRight,
+                        contentDescription = null,
+                        tint = Color(0xFF0B74DA),
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                items(recommendedItems) { item ->
+                    RecommendedItemCard(
+                        product = item,
+                        isLoggedIn = isLoggedIn.value,
+                        setShowLoginPrompt = { showLoginPrompt = it }
+                    )
+                }
+            }
+
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Add to Cart Button
+            Button(
+                onClick = {
+                    if (!isLoggedIn.value) {
+                        showLoginPrompt = true
+                    } else {
+                        // Handle actual cart logic here
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFF6F00)),
+                shape = RoundedCornerShape(12.dp),
+                elevation = ButtonDefaults.elevation(6.dp)
+            ) {
+                Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = Color.White)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Add To Cart", color = Color.White, fontWeight = FontWeight.Bold)
+            }
+            Spacer(modifier = Modifier.height(36.dp))
+        }
+        if (showLoginPrompt) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                RequireLoginPrompt(
+                    onLogin = {
+                        showLoginPrompt = false
+                        navController.navigate("login_screen")
+                    },
+                    onSignUp = {
+                        showLoginPrompt = false
+                        navController.navigate("create_account_screen")
+                    },
+                    onDismiss = {
+                        showLoginPrompt = false
+                        /* don't close dialog from outside click */
+                    }
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            items(recommendedItems) { item ->
-                RecommendedItemCard(item)
-            }
-        }
-
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Add to Cart Button
-        Button(
-            onClick = { /* Handle cart */ },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFF6F00)),
-            shape = RoundedCornerShape(12.dp),
-            elevation = ButtonDefaults.elevation(6.dp)
-        ) {
-            Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = Color.White)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Add To Cart", color = Color.White, fontWeight = FontWeight.Bold)
-        }
-        Spacer(modifier = Modifier.height(36.dp))
     }
 }
 
@@ -253,7 +324,11 @@ val recommendedItems = listOf(
     Products("Bleu De Chanel", "180", R.drawable.perfume4)
 )
 @Composable
-fun RecommendedItemCard(product: Products) {
+fun RecommendedItemCard(
+    product: Products,
+    isLoggedIn: Boolean,
+    setShowLoginPrompt: (Boolean) -> Unit
+) {
     var isFavorite by remember { mutableStateOf(false) }
 
     Column(
@@ -261,7 +336,7 @@ fun RecommendedItemCard(product: Products) {
             .width(160.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(Color.White)
-            .border(1.dp, Color.LightGray, RoundedCornerShape(12.dp))
+            .border(1.dp, Color(0xFF0B74DA), RoundedCornerShape(12.dp))
             .padding(8.dp),
     ) {
         Box(
@@ -280,17 +355,23 @@ fun RecommendedItemCard(product: Products) {
             )
 
             IconButton(
-                onClick = { isFavorite = !isFavorite },
+                onClick = {
+                    if (!isLoggedIn) {
+                        setShowLoginPrompt(true)
+                    } else {
+                        isFavorite = !isFavorite
+                    }
+                },
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(6.dp)
+                    .padding(4.dp)
                     .background(Color.White.copy(alpha = 0.8f), CircleShape)
-                    .size(28.dp)
+                    .size(25.dp)
             ) {
                 Icon(
                     imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                     contentDescription = "Favorite",
-                    tint = if (isFavorite) Color.Red else Color.Gray,
+                    tint = if (isFavorite) Color.Red else Color(0xFF0B74DA),
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -343,7 +424,7 @@ fun RecommendedItemCard(product: Products) {
     }
 }
 
-    @Preview
+@Preview
 @Composable
 fun PreviewPerfumePage() {
     DetailsScreen(navController = rememberNavController(), productId = "1")

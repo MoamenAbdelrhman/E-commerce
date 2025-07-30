@@ -326,9 +326,19 @@ fun AddNewContentScreen(navController: NavHostController) {
                         placeholder = { Text("Qty") },
                         modifier = Modifier.weight(0.6f),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
+                        , colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = Color(0xFF1B7ACE),
+                            unfocusedBorderColor = Color(0xFFB3C1D1),
+                            disabledBorderColor = Color(0xFFB3C1D1),
+                            backgroundColor = Color.White,
+                            disabledTextColor = Color.Black,
+                            disabledPlaceholderColor = Color(0xFFB3C1D1)
+                        ),
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Button(onClick = {
+                    Button(
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFF6F00)),
+                        onClick = {
                         if (selectedColor.isNotBlank() && quantityInput.isNotBlank()) {
                             if (!sizes.contains(selectedSize)) sizes.add(selectedSize)
                             if (colorQuantities[selectedSize] == null) colorQuantities[selectedSize] = mutableMapOf()
@@ -336,7 +346,7 @@ fun AddNewContentScreen(navController: NavHostController) {
                             selectedColor = ""
                             quantityInput = ""
                         }
-                    }) { Text("Add") }
+                    }) { Text("Add",color = Color.White) }
                 }
             }
         } else if (selectedCategoryBehavior.enableSize) {
@@ -351,6 +361,14 @@ fun AddNewContentScreen(navController: NavHostController) {
                     placeholder = { Text("Size (ml)") },
                     modifier = Modifier.weight(1f),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next)
+                    ,colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = Color(0xFF1B7ACE),
+                        unfocusedBorderColor = Color(0xFFB3C1D1),
+                        disabledBorderColor = Color(0xFFB3C1D1),
+                        backgroundColor = Color.White,
+                        disabledTextColor = Color.Black,
+                        disabledPlaceholderColor = Color(0xFFB3C1D1)
+                    ),
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 OutlinedTextField(
@@ -358,17 +376,27 @@ fun AddNewContentScreen(navController: NavHostController) {
                     onValueChange = { if (it.all { char -> char.isDigit() }) quantityInput = it },
                     placeholder = { Text("Qty") },
                     modifier = Modifier.weight(1f),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = Color(0xFF1B7ACE),
+                        unfocusedBorderColor = Color(0xFFB3C1D1),
+                        disabledBorderColor = Color(0xFFB3C1D1),
+                        backgroundColor = Color.White,
+                        disabledTextColor = Color.Black,
+                        disabledPlaceholderColor = Color(0xFFB3C1D1)
+                    ),
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Button(onClick = {
+                Button(
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFF6F00)),
+                    onClick = {
                     if (customSize.isNotBlank() && quantityInput.isNotBlank()) {
                         sizes.add(customSize)
                         colorQuantities[customSize] = mutableMapOf("" to quantityInput)
                         customSize = ""
                         quantityInput = ""
                     }
-                }) { Text("Add") }
+                }) { Text("Add",color = Color.White) }
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -459,7 +487,7 @@ fun AddNewContentScreen(navController: NavHostController) {
                 .height(50.dp),
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFF6F00)),
-            elevation = ButtonDefaults.elevation(defaultElevation = 6.dp)
+            elevation = ButtonDefaults.elevation(defaultElevation = 4.dp)
         ) {
             Text("Submit", color = Color.White, fontWeight = Bold)
         }

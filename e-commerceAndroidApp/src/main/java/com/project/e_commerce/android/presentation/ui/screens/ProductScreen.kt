@@ -88,6 +88,9 @@ fun ProductScreen(navController: NavHostController) {
         it.name.contains(searchQuery, ignoreCase = true)
     }
 
+    val isLoggedIn = remember { mutableStateOf(false) } // Replace with real logic
+    var showLoginPrompt by remember { mutableStateOf(false) }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -117,7 +120,7 @@ fun ProductScreen(navController: NavHostController) {
         item {
             LazyRow(
                 contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(categories) { category ->
                     CategoryItem(
@@ -134,7 +137,9 @@ fun ProductScreen(navController: NavHostController) {
             ProductSection(
                 title = "Featured Products",
                 products = filteredProducts,
-                navController = navController
+                navController = navController,
+                isLoggedIn = isLoggedIn.value,
+                setShowLoginPrompt = { showLoginPrompt = it }
             )
             Spacer(modifier = Modifier.height(4.dp))
         }
@@ -143,10 +148,25 @@ fun ProductScreen(navController: NavHostController) {
             ProductSection(
                 title = "Best Sellers",
                 products = bestSellers,
-                navController = navController
+                navController = navController,
+                isLoggedIn = isLoggedIn.value,
+                setShowLoginPrompt = { showLoginPrompt = it }
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
+    }
+    if (showLoginPrompt) {
+        RequireLoginPrompt(
+            onLogin = {
+                showLoginPrompt = false
+                navController.navigate(Screens.LoginScreen.route)
+            },
+            onSignUp = {
+                showLoginPrompt = false
+                navController.navigate(Screens.LoginScreen.CreateAccountScreen.route)
+            },
+            onDismiss = { showLoginPrompt = false }
+        )
     }
 }
 
@@ -157,23 +177,28 @@ fun TopBarWithCart(navController: NavHostController) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = "Shop Now",
-            fontWeight = FontWeight.Bold,
-            fontSize = 22.sp,
-            modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center,
-            color = Color(0xFF0066CC)
-        )
+        Spacer(modifier = Modifier.weight(1f)) // العمود الأول
 
-        IconButton(modifier = Modifier.offset(x = (12).dp),
-            onClick = { navController.navigate(Screens.ProfileScreen.NotificationScreen.route) }) {
-            Box(
-                contentAlignment = Alignment.TopEnd
-            ) {
+        Box(
+            modifier = Modifier.weight(1f),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.logo_v3),
+                contentDescription = "Logo",
+                modifier = Modifier
+                    .height(52.dp),
+                contentScale = ContentScale.Fit
+            )
+        }
+
+        IconButton(
+            onClick = { navController.navigate(Screens.ProfileScreen.NotificationScreen.route) },
+            modifier = Modifier.weight(1f).offset(x = 46.dp),
+        ) {
+            Box(contentAlignment = Alignment.TopEnd) {
                 Icon(
                     painter = painterResource(id = R.drawable.notification_icon),
                     contentDescription = "Notifications",
@@ -195,8 +220,8 @@ fun TopBarWithCart(navController: NavHostController) {
                 }
             }
         }
-
     }
+
 }
 @Composable
 fun SearchBar(searchQuery: String, onQueryChanged: (String) -> Unit, onClick: () -> Unit ) {
@@ -257,7 +282,7 @@ fun SalesCard() {
             .padding(horizontal = 16.dp)
             .fillMaxWidth()
             .height(150.dp)
-            .clip(RoundedCornerShape(14.dp))
+            .clip(RoundedCornerShape(16.dp))
             .background(Color(0xFF2196F3))
     ) {
         Column(
@@ -317,9 +342,9 @@ fun SalesCard() {
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight()
-                .padding(end = 16.dp)
-                .aspectRatio(1.6f) // العرض أكبر من الطول
-                .clip(RoundedCornerShape( 12.dp))
+                .padding(end = 10.dp)
+                .aspectRatio(1.3f) // العرض أكبر من الطول
+                .clip(RoundedCornerShape( 16.dp))
                 .background(Color.White)
         ) {
             Image(
@@ -345,7 +370,7 @@ fun CategoryItem(
         modifier = Modifier
             .width(80.dp)
             .height(110.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(8.dp))
             .background(if (isSelected) Color(0xFFFF6F00) else Color(0xFF757575))
             .clickable { onClick() }
     ) {
@@ -378,8 +403,14 @@ fun CategoryItem(
 
 
 @Composable
-fun ProductSection(title: String, products: List<Product>, navController: NavHostController) {
-    Column(modifier = Modifier.padding(16.dp)) {
+fun ProductSection(
+    title: String,
+    products: List<Product>,
+    navController: NavHostController,
+    isLoggedIn: Boolean,
+    setShowLoginPrompt: (Boolean) -> Unit
+) {
+    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -407,9 +438,14 @@ fun ProductSection(title: String, products: List<Product>, navController: NavHos
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(products) { product ->
-                ProductCard(product = product) {
-                    navController.navigate(Screens.ProductScreen.DetailsScreen.route + "/${product.name}")
-                }
+                ProductCard(
+                    product = product,
+                    isLoggedIn = isLoggedIn,
+                    setShowLoginPrompt = setShowLoginPrompt,
+                    onClick = {
+                        navController.navigate(Screens.ProductScreen.DetailsScreen.route + "/${product.name}")
+                    }
+                )
             }
         }
     }
@@ -417,7 +453,12 @@ fun ProductSection(title: String, products: List<Product>, navController: NavHos
 
 
 @Composable
-fun ProductCard(product: Product, onClick: () -> Unit) {
+fun ProductCard(
+    product: Product,
+    isLoggedIn: Boolean,
+    setShowLoginPrompt: (Boolean) -> Unit,
+    onClick: () -> Unit
+) {
     var isFavorite by remember { mutableStateOf(false) }
 
     Column(
@@ -425,7 +466,7 @@ fun ProductCard(product: Product, onClick: () -> Unit) {
             .width(160.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(Color.White)
-            .border(1.dp, Color.LightGray, RoundedCornerShape(12.dp))
+            .border(1.dp, Color(0xFF0B74DA), RoundedCornerShape(12.dp))
             .clickable { onClick() }
             .padding(8.dp),
     ) {
@@ -445,7 +486,13 @@ fun ProductCard(product: Product, onClick: () -> Unit) {
             )
 
             IconButton(
-                onClick = { isFavorite = !isFavorite },
+                onClick = {
+                    if (!isLoggedIn) {
+                        setShowLoginPrompt(true)
+                    } else {
+                        isFavorite = !isFavorite
+                    }
+                },
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(6.dp)
@@ -455,7 +502,7 @@ fun ProductCard(product: Product, onClick: () -> Unit) {
                 Icon(
                     imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                     contentDescription = "Favorite",
-                    tint = if (isFavorite) Color.Red else Color.Gray,
+                    tint = if (isFavorite) Color.Red else Color(0xFF0B74DA),
                     modifier = Modifier.size(20.dp)
                 )
             }

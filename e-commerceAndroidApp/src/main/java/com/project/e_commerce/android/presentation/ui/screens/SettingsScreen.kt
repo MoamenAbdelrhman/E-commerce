@@ -78,7 +78,7 @@ fun SettingsScreen(navController: NavHostController) {
             )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(28.dp))
         SettingsItem("Orders Track", R.drawable.track) {
             navController.navigate(Screens.ProfileScreen.TrackOrderScreen.route)
         }
@@ -115,7 +115,7 @@ fun SettingsItem(title: String, icon: Int,onClick: () -> Unit) {
     ) {
         Icon(painter = painterResource(id = icon), contentDescription = null)
         Spacer(modifier = Modifier.width(12.dp))
-        Text(title, modifier = Modifier.weight(1f), fontSize = 15.sp)
+        Text(title,color = Color(0xFF0066CC), modifier = Modifier.weight(1f), fontSize = 15.sp)
         Icon(Icons.Default.KeyboardArrowRight, contentDescription = null)
     }
 }

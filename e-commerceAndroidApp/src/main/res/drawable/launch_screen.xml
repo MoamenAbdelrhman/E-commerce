@@ -1,28 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- White background -->
+    <!-- خلفية بيضاء -->
     <item android:drawable="@android:color/white" />
 
-    <!-- Blue shape top-right -->
+    <!-- الشعار مرفوع قليلاً -->
     <item>
-        <bitmap
-            android:src="@drawable/shape1"
-            android:gravity="top|end" />
-    </item>
-
-    <!-- Orange shape bottom-left -->
-    <item>
-        <bitmap
-            android:src="@drawable/shape2"
-            android:gravity="bottom|start" />
-    </item>
-
-    <!-- BUYV logo center -->
-    <item>
-        <bitmap
-            android:src="@drawable/img"
-            android:gravity="center" />
+        <inset
+            android:insetTop="0dp"
+            android:insetLeft="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="200dp">
+            <bitmap
+                android:src="@drawable/img_3"
+                android:gravity="center"
+                android:tileMode="disabled" />
+        </inset>
     </item>
 
 </layer-list>

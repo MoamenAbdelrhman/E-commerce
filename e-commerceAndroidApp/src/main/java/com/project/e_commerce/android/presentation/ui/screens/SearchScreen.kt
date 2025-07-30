@@ -124,6 +124,8 @@ fun SearchScreen(navController: NavHostController) {
         textFieldFocusRequester.requestFocus()
     }
 
+    val isLoggedIn = remember { mutableStateOf(false) }
+    var showLoginPrompt by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -308,9 +310,14 @@ fun SearchScreen(navController: NavHostController) {
             ) {
                 items(filteredProducts.size) { index ->
                     val product = filteredProducts[index]
-                    ProductCard(product = product) {
-                        navController.navigate(Screens.ProductScreen.DetailsScreen.route + "/${product.name}")
-                    }
+                    ProductCard(
+                        product = product,
+                        isLoggedIn = isLoggedIn.value,
+                        setShowLoginPrompt = { showLoginPrompt = it },
+                        onClick = {
+                            navController.navigate(Screens.ProductScreen.DetailsScreen.route + "/${product.name}")
+                        }
+                    )
                 }
             }
         }
@@ -351,6 +358,19 @@ fun SearchScreen(navController: NavHostController) {
                 )
             }
         }
+    }
+    if (showLoginPrompt) {
+        RequireLoginPrompt(
+            onLogin = {
+                showLoginPrompt = false
+                navController.navigate(Screens.LoginScreen.route)
+            },
+            onSignUp = {
+                showLoginPrompt = false
+                navController.navigate(Screens.LoginScreen.CreateAccountScreen.route)
+            },
+            onDismiss = { showLoginPrompt = false }
+        )
     }
 }
 
